@@ -1,23 +1,20 @@
-[AID_QTI_DIAG]
+[AID_VENDOR_QTI_DIAG]
 value:2901
 
-[AID_RFS]
+[AID_VENDOR_QDSS]
+value:2902
+
+[AID_VENDOR_RFS]
 value:2903
 
-[AID_RFS_SHARED]
+[AID_VENDOR_RFS_SHARED]
 value:2904
 
-[vendor/bin/wcnss_filter]
-mode: 0755
-user: AID_BLUETOOTH
-group: AID_BLUETOOTH
-caps: BLOCK_SUSPEND
+[AID_VENDOR_ADPL_ODL]
+value:2905
 
-[system/vendor/bin/wcnss_filter]
-mode: 0755
-user: AID_BLUETOOTH
-group: AID_BLUETOOTH
-caps: BLOCK_SUSPEND
+[AID_VENDOR_QRTR]
+value:2906
 
 [vendor/bin/hw/android.hardware.bluetooth@1.0-service-qti]
 mode: 0755
@@ -133,11 +130,23 @@ user:  AID_GPS
 group: AID_GPS
 caps: NET_BIND_SERVICE
 
+[system/vendor/bin/loc_launcher]
+mode: 0755
+user:  AID_GPS
+group: AID_GPS
+caps: SETUID SETGID
+
 [vendor/bin/xtwifi-client]
 mode: 0755
 user:  AID_GPS
 group: AID_GPS
 caps: NET_BIND_SERVICE BLOCK_SUSPEND
+
+[vendor/bin/sensors.qcom]
+mode: 0755
+user: AID_SYSTEM
+group: AID_SYSTEM
+caps: NET_BIND_SERVICE
 
 [firmware/]
 mode: 0771

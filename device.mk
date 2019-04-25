@@ -24,7 +24,7 @@ $(call inherit-product, vendor/leeco/s2/s2-vendor.mk)
 # Overlay
 DEVICE_PACKAGE_OVERLAYS += \
     $(LOCAL_PATH)/overlay \
-    $(LOCAL_PATH)/overlay-lineage
+    $(LOCAL_PATH)/overlay-aosp
 
 PRODUCT_ENFORCE_RRO_TARGETS := \
     framework-res
@@ -34,7 +34,13 @@ PRODUCT_AAPT_PREF_CONFIG := xxhdpi
 PRODUCT_AAPT_CONFIG := normal
 
 # Dalvik heap memory limits
-$(call inherit-product, frameworks/native/build/phone-xxhdpi-3072-dalvik-heap.mk)
+PRODUCT_PROPERTY_OVERRIDES += \
+    dalvik.vm.heapstartsize=8m \
+    dalvik.vm.heapgrowthlimit=288m \
+    dalvik.vm.heapsize=768m \
+    dalvik.vm.heaptargetutilization=0.75 \
+    dalvik.vm.heapminfree=512k \
+    dalvik.vm.heapmaxfree=8m
 
 # Boot animation
 TARGET_SCREEN_HEIGHT := 1920
@@ -116,6 +122,11 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/audio/audio_platform_info_extcodec.xml:$(TARGET_COPY_OUT_VENDOR)/etc/audio_platform_info_extcodec.xml \
     $(LOCAL_PATH)/audio/mixer_paths_qrd_skun_cajon.xml:$(TARGET_COPY_OUT_VENDOR)/etc/mixer_paths_qrd_skun_cajon.xml
 
+# Sound trigger configs
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/audio/sound_trigger_mixer_paths.xml:$(TARGET_COPY_OUT_VENDOR)/etc/sound_trigger_mixer_paths.xml \
+    $(LOCAL_PATH)/audio/sound_trigger_platform_info.xml:$(TARGET_COPY_OUT_VENDOR)/etc/sound_trigger_platform_info.xml
+
 # XML Audio configuration files
 PRODUCT_COPY_FILES += \
     frameworks/av/services/audiopolicy/config/a2dp_audio_policy_configuration.xml:$(TARGET_COPY_OUT_VENDOR)/etc/a2dp_audio_policy_configuration.xml \
@@ -128,10 +139,6 @@ PRODUCT_COPY_FILES += \
 PRODUCT_COPY_FILES +=  \
     $(LOCAL_PATH)/audio/dax-default.xml:$(TARGET_COPY_OUT_VENDOR)/etc/dolby/dax-default.xml
 
-# Bluetooth
-PRODUCT_PACKAGES += \
-    libbt-vendor
-
 # Camera
 PRODUCT_PACKAGES += \
     Snap
@@ -141,16 +148,28 @@ PRODUCT_PACKAGES += \
     camera.msm8952 \
     libqomx_core \
     libmmcamera_interface \
-    libmmjpeg_interface
+    libmmjpeg_interface \
+    libgui_vendor \
+    libmm-qcamera
 endif
+
+PRODUCT_COPY_FILES +=  \
+    $(LOCAL_PATH)/configs/external_camera_config.xml:$(TARGET_COPY_OUT_VENDOR)/etc/external_camera_config.xml
+
+# Charger
+PRODUCT_PACKAGES += \
+    charger_res_images
 
 # Connectivity Engine support (CNE)
 PRODUCT_PACKAGES += \
     libcnefeatureconfig
 
-# Consumerir
+# Consumer IR
 PRODUCT_PACKAGES += \
-    consumerir.msm8952
+    ConsumerirTransmitter
+
+PRODUCT_COPY_FILES += \
+    frameworks/native/data/etc/android.hardware.consumerir.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.consumerir.xml
 
 # Data Services
 PRODUCT_PACKAGES += \
@@ -170,14 +189,13 @@ PRODUCT_PACKAGES += \
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/ad_calib.cfg:system/etc/ad_calib.cfg
 
-# Doze mode
+# Fake logprint for fingerprint libs
 PRODUCT_PACKAGES += \
-    Doze
+    fakelogprint
 
 # Fingerprint
 PRODUCT_PACKAGES += \
-    fingerprint.msm8952 \
-    fingerprintd
+    fingerprint.msm8952
 
 # For android_filesystem_config.h
 PRODUCT_PACKAGES += \
@@ -188,7 +206,12 @@ PRODUCT_PACKAGES += \
     gps.msm8952 \
     libcurl \
     libgnss \
-    libgnsspps
+    libgnsspps \
+    libgps.utils \
+    libloc_core \
+    libloc_stub \
+    libloc_pla \
+    liblocation_api
 
 PRODUCT_PACKAGES += \
     flp.conf \
@@ -201,7 +224,9 @@ PRODUCT_PACKAGES += \
 # HIDL
 PRODUCT_PACKAGES += \
     android.hidl.base@1.0 \
+    android.hidl.base@1.0_system \
     android.hidl.manager@1.0 \
+    android.hidl.manager@1.0_system \
     android.hidl.manager@1.0-java
 
 # Input configuration
@@ -241,19 +266,19 @@ PRODUCT_COPY_FILES += \
 PRODUCT_PACKAGES += \
     keystore.msm8952
 
+# LeEco Modules
+PRODUCT_PACKAGES += \
+    LeEcoParts \
+    LePref
+
+# LeEco IR remote
+PRODUCT_PACKAGES += \
+    LeRemote
+
 # Libshims
 PRODUCT_PACKAGES += \
     libshims_camera \
-    libshims_ims \
-    libshims_rild_socket
-
-# Lights
-PRODUCT_PACKAGES += \
-    lights.msm8952
-
-# Livedisplay
-PRODUCT_PACKAGES += \
-    vendor.lineage.livedisplay@1.0-service-legacymm
+    libshims_ims
 
 # Media
 PRODUCT_COPY_FILES += \
@@ -274,24 +299,36 @@ PRODUCT_PACKAGES += \
 # OMX
 PRODUCT_PACKAGES += \
     libc2dcolorconvert \
-    libextmedia_jni \
+    libmm-omxcore \
     libOmxAacEnc \
     libOmxAmrEnc \
     libOmxCore \
     libOmxEvrcEnc \
     libOmxQcelp13Enc \
-    libOmxSwVencMpeg4 \
-    libOmxSwVencHevc \
     libOmxVdec \
-    libOmxVdecHevc \
-    libOmxVidcCommon \
     libOmxVenc \
     libstagefrighthw
 
+# Perf
+PRODUCT_BOOT_JARS += \
+    QPerformance \
+    UxPerformance
 
-# Powerhint configuration file
+# Perf configuration files
 PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/configs/powerhint.xml:$(TARGET_COPY_OUT_VENDOR)/etc/powerhint.xml
+    $(LOCAL_PATH)/configs/perf/commonresourceconfigs.xml:$(TARGET_COPY_OUT_VENDOR)/etc/perf/commonresourceconfigs.xml \
+    $(LOCAL_PATH)/configs/perf/perfboostsconfig.xml:$(TARGET_COPY_OUT_VENDOR)/etc/perf/perfboostsconfig.xml \
+    $(LOCAL_PATH)/configs/perf/targetconfig.xml:$(TARGET_COPY_OUT_VENDOR)/etc/perf/targetconfig.xml \
+    $(LOCAL_PATH)/configs/perf/targetresourceconfigs.xml:$(TARGET_COPY_OUT_VENDOR)/etc/perf/targetresourceconfigs.xml
+
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/configs/perf/perf-profile0.conf:$(TARGET_COPY_OUT_VENDOR)/etc/perf/perf-profile0.conf \
+    $(LOCAL_PATH)/configs/perf/perf-profile1.conf:$(TARGET_COPY_OUT_VENDOR)/etc/perf/perf-profile1.conf \
+    $(LOCAL_PATH)/configs/perf/perf-profile2.conf:$(TARGET_COPY_OUT_VENDOR)/etc/perf/perf-profile2.conf \
+    $(LOCAL_PATH)/configs/perf/perf-profile3.conf:$(TARGET_COPY_OUT_VENDOR)/etc/perf/perf-profile3.conf \
+    $(LOCAL_PATH)/configs/perf/perf-profile4.conf:$(TARGET_COPY_OUT_VENDOR)/etc/perf/perf-profile4.conf \
+    $(LOCAL_PATH)/configs/perf/perf-profile5.conf:$(TARGET_COPY_OUT_VENDOR)/etc/perf/perf-profile5.conf \
+    $(LOCAL_PATH)/configs/perf/perf-profile6.conf:$(TARGET_COPY_OUT_VENDOR)/etc/perf/perf-profile6.conf
 
 # Privapp Whitelist
 PRODUCT_COPY_FILES += \
@@ -305,14 +342,16 @@ PRODUCT_PACKAGES += \
 # Ramdisk
 PRODUCT_PACKAGES += \
     fstab.qcom \
-    init.qcom.sh
+    init.qcom.sh \
+    init.qcom.early_boot.sh \
+    init.qcom.post_boot.sh
 
 PRODUCT_PACKAGES += \
     init.qcom.rc \
     init.target.rc \
     init.s2.usb.rc \
-    init.qcom.power.rc \
-    ueventd.qcom.rc
+    ueventd.qcom.rc \
+    init.safailnet.rc
 
 # RCS
 PRODUCT_PACKAGES += \
@@ -327,10 +366,13 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/seccomp_policy/mediaextractor.policy:$(TARGET_COPY_OUT_VENDOR)/etc/seccomp_policy/mediaextractor.policy
 
 # Sensors
+PRODUCT_PACKAGES += \
+    libsensorndkbridge
+
 PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/sensors/sensor_def_qcomdev.conf:$(TARGET_COPY_OUT_VENDOR)/etc/sensors/sensor_def_qcomdev.conf \
-    $(LOCAL_PATH)/sensors/sensors_dbg_config.txt:$(TARGET_COPY_OUT_VENDOR)/etc/sensors/sensors_dbg_config.txt \
-    $(LOCAL_PATH)/sensors/hals.conf:$(TARGET_COPY_OUT_VENDOR)/etc/sensors/hals.conf
+    $(LOCAL_PATH)/sensors/configs/sensor_def_qcomdev.conf:$(TARGET_COPY_OUT_VENDOR)/etc/sensors/sensor_def_qcomdev.conf \
+    $(LOCAL_PATH)/sensors/configs/sensors_dbg_config.txt:$(TARGET_COPY_OUT_VENDOR)/etc/sensors/sensors_dbg_config.txt \
+    $(LOCAL_PATH)/sensors/configs/hals.conf:$(TARGET_COPY_OUT_VENDOR)/etc/sensors/hals.conf
 
 # Stlport
 PRODUCT_PACKAGES += \
@@ -343,12 +385,17 @@ PRODUCT_PACKAGES += \
 PRODUCT_BOOT_JARS += \
     telephony-ext
 
+# TextClassifier smart selection model files
+PRODUCT_PACKAGES += \
+    textclassifier.bundle1
+
 # Thermal
 PRODUCT_PACKAGES += \
     thermal.msm8952
 
 PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/configs/thermal-engine.conf:$(TARGET_COPY_OUT_VENDOR)/etc/thermal-engine.conf
+    $(LOCAL_PATH)/configs/thermal-engine.conf:$(TARGET_COPY_OUT_VENDOR)/etc/thermal-engine.conf \
+    $(LOCAL_PATH)/configs/thermal-engine-srtphone.conf:system/etc/thermal-engine-srtphone.conf
 
 # USB
 PRODUCT_PACKAGES += \
@@ -368,8 +415,6 @@ PRODUCT_COPY_FILES += \
 
 # Wifi
 PRODUCT_PACKAGES += \
-    libqsap_sdk \
-    libQWiFiSoftApCfg \
     libwpa_client \
     hostapd \
     wifilogd \
@@ -397,3 +442,110 @@ PRODUCT_BUILD_PROP_OVERRIDES += BUILD_UTC_DATE=0
 # Model is set via init library
 PRODUCT_SYSTEM_PROPERTY_BLACKLIST := \
     ro.product.model
+
+PRODUCT_PACKAGES += \
+    parted \
+    SnapdragonCamera2 \
+    OmniSwitch \
+    AdAway \
+    KA27
+
+GAPPS_VARIANT := stock
+GAPPS_FORCE_WEBVIEW_OVERRIDES := true
+GAPPS_FORCE_MMS_OVERRIDES := true
+GAPPS_FORCE_MESSAGING_OVERRIDES := true
+GAPPS_FORCE_LATINIME_OVERRIDES := true
+GAPPS_FORCE_DIALER_OVERRIDES := true
+GAPPS_FORCE_PICTTS_OVERRIDES := true
+GAPPS_FORCE_MATCHING_DPI := true
+GAPPS_FORCE_PACKAGE_OVERRIDES := true
+GAPPS_LOCAL_OVERRIDES_PACKAGES += LatinIME messaging MMS PicoTTS
+GAPPS_EXCLUDED_PACKAGES += Hangouts PlusOne GoogleHome Velvet NexusLauncher PrintServiceGoogle GooglePay Duo TalkBack Music Movies CloudPrint Books TagGoogle PixelLauncher GoogleNow
+
+
+
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/ringtones/Boxbeat.ogg:system/media/audio/ringtones/Boxbeat.ogg \
+    $(LOCAL_PATH)/ringtones/CyanTone.ogg:system/media/audio/ringtones/CyanTone.ogg \
+    $(LOCAL_PATH)/ringtones/Highscore.ogg:system/media/audio/ringtones/Highscore.ogg \
+    $(LOCAL_PATH)/ringtones/Lyon.ogg:system/media/audio/ringtones/Lyon.ogg \
+    $(LOCAL_PATH)/ringtones/Resurrection.mp3:system/media/audio/ringtones/Resurrection.mp3 \
+    $(LOCAL_PATH)/ringtones/Resurrection_Ringtone2.mp3:system/media/audio/ringtones/Resurrection_Ringtone2.mp3 \
+    $(LOCAL_PATH)/ringtones/Rockin.ogg:system/media/audio/ringtones/Rockin.ogg \
+    $(LOCAL_PATH)/ringtones/RR.mp3:system/media/audio/ringtones/RR.mp3 \
+    $(LOCAL_PATH)/ringtones/Sheep.mp3:system/media/audio/ringtones/Sheep.mp3 \
+    $(LOCAL_PATH)/ringtones/Yukaay.ogg:system/media/audio/ringtones/Yukaay.ogg
+
+
+# Twrp
+#RECOVERY_VARIANT := twrp
+ifeq ($(RECOVERY_VARIANT),twrp)
+TARGET_RECOVERY_FSTAB := $(LOCAL_PATH)/twrp/fstab.qcom
+TARGET_RECOVERY_DEVICE_DIRS += device/leeco/s2/twrp
+BOARD_HAS_NO_REAL_SDCARD := true
+TARGET_USE_CUSTOM_LUN_FILE_PATH := /sys/devices/platform/msm_hsusb/gadget/lun0/file
+TW_THEME := portrait_hdpi
+RECOVERY_SDCARD_ON_DATA := true
+TARGET_RECOVERY_QCOM_RTC_FIX := true
+TW_BRIGHTNESS_PATH := /sys/class/leds/lcd-backlight/brightness
+TW_DEFAULT_BRIGHTNESS := "160"
+TW_INPUT_BLACKLIST := "hbtp_vm"
+TW_EXTRA_LANGUAGES := true
+TW_INCLUDE_CRYPTO := true
+TW_INCLUDE_NTFS_3G := true
+PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
+    persist.sys.usb.config=mtp,adb \
+    ro.product.locale=ru-RU \
+    persist.sys.timezone=Europe/Moscow \
+    ro.secure=0 \
+    ro.debug.secure=0 \
+    ro.adb.secure=0 \
+    ro.debuggable=1
+
+
+TW_INCLUDE_CRYPTO := false
+TW_THEME := portrait_hdpi
+TW_USE_TOOLBOX := false
+TW_EXCLUDE_SUPERSU := false
+TARGET_USERIMAGES_USE_EXT4 := true
+TARGET_USERIMAGES_USE_F2FS := true
+TW_HAS_NO_RECOVERY_PARTITION := false
+TW_HAS_NO_BOOT_PARTITION := false
+TW_NO_REBOOT_BOOTLOADER := false
+TW_NO_REBOOT_RECOVERY := false
+TW_NO_BATT_PERCENT := false
+TW_NO_CPU_TEMP := false
+TW_INCLUDE_FBE := false
+TW_INCLUDE_FBE_METADATA_DECRYPT := false
+
+TW_NEVER_UNMOUNT_SYSTEM := false
+TW_NO_USB_STORAGE := false
+TW_INCLUDE_INJECTTWRP := false
+TW_INCLUDE_BLOBPACK := false
+TW_HAS_DOWNLOAD_MODE := true
+TW_SDEXT_NO_EXT4 := false
+TW_NO_EXFAT_FUSE := false
+TW_DEFAULT_LANGUAGE := ru
+TW_NO_EXFAT := false
+TW_EXCLUDE_ENCRYPTED_BACKUPS := false
+TW_EXCLUDE_DEFAULT_USB_INIT := false
+TW_INCLUDE_NTFS_3G := false
+TW_OEM_BUILD := false
+TW_INCLUDE_FB2PNG := true
+TWRP_INCLUDE_LOGCAT := true
+TARGET_RECOVERY_DEVICE_MODULES := libf2fs libf2fs_sparseblock libncurses libnl libssh libsysutils unrar 7z bash crypto fsck_msdos htop  logd logwrapper mkfs.f2fs mount.exfat nano tzdatacheck uncrypt gptfdisk libnl ntfs-3g p7zip squashfs-tools ext4_utils f2fs_utils libcutils libsparse logcat logd logwrapper squashfs_utils
+#TWRP_EVENT_LOGGING := true
+else
+TARGET_RECOVERY_FSTAB := $(DEVICE_PATH)/rootdir/etc/fstab.qcom
+TARGET_USERIMAGES_USE_EXT4 := true
+TARGET_USES_MKE2FS := true
+TARGET_USERIMAGES_USE_F2FS := true
+
+endif
+
+# Recovery
+TARGET_USERIMAGES_USE_EXT4 := true
+TARGET_USERIMAGES_USE_F2FS := true
+
+
+$(call inherit-product, vendor/opengapps/build/opengapps-packages.mk)

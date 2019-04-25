@@ -67,9 +67,8 @@ LOCAL_C_INCLUDES += \
         frameworks/native/include/media/hardware \
         device/leeco/s2/camera/QCamera2/HAL
 
-ifeq ($(TARGET_COMPILE_WITH_MSM_KERNEL),true)
-LOCAL_C_INCLUDES += $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr/include
-endif
+LOCAL_HEADER_LIBRARIES := generated_kernel_headers
+
 ifeq ($(TARGET_TS_MAKEUP),true)
 LOCAL_CFLAGS += -DTARGET_TS_MAKEUP
 LOCAL_C_INCLUDES += $(LOCAL_PATH)/HAL/tsMakeuplib/include
@@ -93,7 +92,7 @@ LOCAL_C_INCLUDES += \
         hardware/qcom/display-caf/msm8952/libqservice
 LOCAL_SHARED_LIBRARIES := libcamera_client liblog libhardware libutils libcutils libdl
 LOCAL_SHARED_LIBRARIES += libmmcamera_interface libmmjpeg_interface libui libcamera_metadata
-LOCAL_SHARED_LIBRARIES += libqdMetaData libqservice libbinder
+LOCAL_SHARED_LIBRARIES += libqdMetaData libqservice libbinder libgui
 ifeq ($(TARGET_TS_MAKEUP),true)
 LOCAL_SHARED_LIBRARIES += libts_face_beautify_hal libts_detected_face_hal
 endif
@@ -101,8 +100,8 @@ endif
 LOCAL_CLANG := true
 
 LOCAL_MODULE_RELATIVE_PATH := hw
-LOCAL_PROPRIETARY_MODULE := true
 LOCAL_MODULE := camera.$(TARGET_BOARD_PLATFORM)
+LOCAL_VENDOR_MODULE := true
 LOCAL_MODULE_TAGS := optional
 
 LOCAL_32_BIT_ONLY := $(BOARD_QTI_CAMERA_32BIT_ONLY)

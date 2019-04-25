@@ -28,28 +28,47 @@
 
 import /vendor/etc/init/hw/init.s2.usb.rc
 
-on early-init
-    symlink /data/tombstones /tombstones
-
-on fs
+on init
+    # QSEE rpmb listener need symlink for bootdevice
     wait /dev/block/platform/soc.0/${ro.boot.bootdevice}
     symlink /dev/block/platform/soc.0/${ro.boot.bootdevice} /dev/block/bootdevice
-    mount_all /vendor/etc/fstab.qcom
+    
+    # Start qseecomd early as we mount system/ early
+    # vold needs keymaster which needs qseecomd
+    start vendor.qseecomd
+    
+    write /sys/module/qpnp_rtc/parameters/poweron_alarm 1
+
+on fs
+    # Start HW service manager early
+    start hwservicemanager
+    
+    mount_all /system/vendor/etc/fstab.qcom --early
 
     mkdir /persist/data 0700 system system
-    
+
     # Bluetooth 
     mkdir /persist/wlan_bt 0700 system system
     
     restorecon_recursive /persist
     restorecon_recursive /dsp
 
+on post-fs
+    wait_for_prop sys.listeners.registered true
+
+    write /dev/ipa 1
+
+on late-fs
+    # Start services for bootanim
+    start vendor.configstore-hal
+    start surfaceflinger
+    start bootanim
+    start vendor.gralloc-2-0
+
+    # mount RW partitions which need run fsck
+    mount_all /system/vendor/etc/fstab.qcom --late
+
 on post-fs-data
-    mkdir /data/tombstones 0771 system system
-    mkdir /tombstones/modem 0771 system system
-    mkdir /tombstones/lpass 0771 system system
-    mkdir /tombstones/wcnss 0771 system system
-    mkdir /tombstones/dsps 0771 system system
     mkdir /persist/data/sfs 0700 system system
     mkdir /persist/data/tz 0700 system system
     mkdir /data/misc/dts 0770 media audio
@@ -96,32 +115,13 @@ on post-fs-data
     # fingerprint
     chown system system  /dev/goodix_fp
     chmod 0644 /dev/goodix_fp
-    chown system system  /vendor/bin/gx_fpd
-    chmod 0755 /vendor/bin/gx_fpd
 
     chmod 660 /persist/serialno
     chown system system /persist/serialno
 
-    # ir
-    chmod 666 /sys/remote/enable
-    chown system system /sys/remote/enable
-    chmod 666 /dev/ttyHSL1
-    chmod 666 /dev/ttyHS1
-    chown system system /dev/ttyHSL1
-    chown system system /dev/ttyHS1
-
     # leds
     chown system system /sys/module/leds_aw2013/parameters/aw2013_sleep_led
     chmod 0666 /sys/module/leds_aw2013/parameters/aw2013_sleep_led
-
-    chown system system /sys/class/leds/red/blink
-    chown system system /sys/class/leds/red/led_time
-
-    chown system system /sys/class/leds/green/blink
-    chown system system /sys/class/leds/green/led_time
-
-    chown system system /sys/class/leds/blue/blink
-    chown system system /sys/class/leds/blue/led_time
 
     chown system camera /sys/class/leds/led:flash_0/brightness
     chmod 0664 /sys/class/leds/led:flash_0/brightness
@@ -151,22 +151,15 @@ on post-fs-data
     chown system system /sys/class/power_supply/battery/le_quick_charge_mode
     chmod 666 /sys/class/power_supply/battery/le_quick_charge_mode
 
-#Create folder for mm-qcamera-daemon
-mkdir /data/vendor/camera 0770 camera camera
+    #Create folder for mm-qcamera-daemon
+    mkdir /data/vendor/camera 0770 camera camera
 
 # start camera server as daemon
 service qcamerasvr /system/bin/mm-qcamera-daemon
     class late_start
     user camera
     group camera system inet input graphics
-
-on init
-   write /sys/module/qpnp_rtc/parameters/poweron_alarm 1
-
-# enable zram
-on property:ro.config.zram=true
-    swapon_all fstab.qcom
-    write /proc/sys/vm/swappiness 100
+    writepid /dev/cpuset/camera-daemon/tasks
 
 # Allow usb charging to be disabled peristently
 on property:persist.usb.chgdisabled=1
@@ -175,39 +168,36 @@ on property:persist.usb.chgdisabled=1
 on property:persist.usb.chgdisabled=0
     write /sys/class/power_supply/battery/charging_enabled 1
 
-service qseecomd /system/vendor/bin/qseecomd
+service vendor.qseecomd /system/vendor/bin/qseecomd
    class core
    user root
    group root
+   writepid /dev/cpuset/foreground/tasks
 
-service perfd /system/vendor/bin/perfd
-   class main
-   user root
-   disabled
-
-service thermal-engine /system/vendor/bin/thermal-engine
+service vendor.thermal-engine /system/vendor/bin/thermal-engine
    class main
    user root
    socket thermal-send-client stream 0666 system system
    socket thermal-recv-client stream 0660 system system
    socket thermal-recv-passive-client stream 0666 system system
    socket thermal-send-rule stream 0660 system system
-   group root
+   group system root diag
+   writepid /dev/cpuset/system-background/tasks
 
 on boot
-    start rmt_storage
+    start vendor.rmt_storage
 
     chown system system /proc/touchpanel/capacitive_keys_enable
 
     write /proc/sys/kernel/sched_boost 1
 
-service wcnss-service /system/bin/wcnss_service
+service vendor.wcnss-service /system/bin/wcnss_service
     class main
     user system
     group system wifi radio
     oneshot
 
-service ppd /system/vendor/bin/mm-pp-daemon
+service vendor.ppd /system/vendor/bin/mm-pp-daemon
     class late_start
     disabled
     user system
@@ -215,106 +205,103 @@ service ppd /system/vendor/bin/mm-pp-daemon
     group system graphics
 
 on property:init.svc.surfaceflinger=stopped
-    stop ppd
+    stop vendor.ppd
 
 on property:init.svc.surfaceflinger=running
-    start ppd
+    start vendor.ppd
 
 # workaround for color service issue
 on property:init.svc.surfaceflinger=restarting
-    stop ppd
+    stop vendor.ppd
 
 on property:init.svc.zygote=stopped
-    stop ppd
+    stop vendor.ppd
 
 on property:init.svc.zygote=running
-    start ppd
+    start vendor.ppd
 
 on property:init.svc.zygote=restarting
-    stop ppd
+    stop vendor.ppd
 
-service imsqmidaemon /system/vendor/bin/imsqmidaemon
+service vendor.imsqmidaemon /system/vendor/bin/imsqmidaemon
     class main
     user system
     socket ims_qmid stream 0660 system radio
     group radio log diag
-    seclabel u:r:ims:s0
-
-service imsdatadaemon /system/vendor/bin/imsdatadaemon
+    writepid /dev/cpuset/system-background/tasks
+    
+service vendor.imsdatadaemon /system/vendor/bin/imsdatadaemon
     class main
     user system
     socket ims_datad stream 0660 system radio
     group system wifi radio inet log diag
-    seclabel u:r:ims:s0
     disabled
+    writepid /dev/cpuset/system-background/tasks
 
 on property:vendor.ims.QMI_DAEMON_STATUS=1
-    start imsdatadaemon
+    start vendor.imsdatadaemon
 
-service ims_rtp_daemon /system/vendor/bin/ims_rtp_daemon
+service vendor.ims_rtp_daemon /system/vendor/bin/ims_rtp_daemon
     class main
     user system
     socket ims_rtpd stream 0660 system radio
     group radio diag inet log
-    seclabel u:r:hal_imsrtp:s0
-    disabled
+    writepid /dev/cpuset/system-background/tasks
 
 service vendor.imsrcsservice /system/vendor/bin/imsrcsd
     class main
     user system
     group radio diag inet log
-    seclabel u:r:ims:s0
-    disabled
+    writepid /dev/cpuset/system-background/tasks
 
 on property:vendor.ims.DATA_DAEMON_STATUS=1
-    start ims_rtp_daemon
-    start imsrcsservice
+    restart vendor.ims_rtp_daemon
 
-service fingerprintd /system/bin/fingerprintd
-    class late_start
-    socket fpce stream 0666 system system
-    user system
-
-service gx_fpd /system/bin/gx_fpd
+service gx_fpd /vendor/bin/gx_fpd
     class late_start
     user root
     group root system
-    seclabel u:r:goodix:s0
 
 on charger
+    load_system_props
     setprop persist.sys.usb.config mass_storage
-    start qcom-post-boot
+    start vendor.qcom-post-boot
     setprop persist.sys.usb.config mass_storage
-    start hvdcp_opti
-    start thermal-engine
+    start vendor.hvdcp_opti
+    start vendor.thermal-engine
+    start vendor.power_off_alarm
 
-service adsprpcd /system/vendor/bin/adsprpcd
+service vendor.adsprpcd /system/vendor/bin/adsprpcd
     class main
     user media
     group media
+    writepid /dev/cpuset/system-background/tasks
 
-service hvdcp_opti /system/vendor/bin/hvdcp_opti
+service vendor.hvdcp_opti /system/vendor/bin/hvdcp_opti
     class main
     user root
     group system wakelock
-    seclabel u:r:hvdcp:s0
+    writepid /dev/cpuset/system-background/tasks
 
-service per_mgr /system/vendor/bin/pm-service
+service vendor.per_mgr /system/vendor/bin/pm-service
     class core
     user system
     group system
+    ioprio rt 4
+    writepid /dev/cpuset/system-background/tasks
 
-service per_proxy /system/vendor/bin/pm-proxy
+service vendor.per_proxy /system/vendor/bin/pm-proxy
     class core
     user system
     group system
     disabled
+    writepid /dev/cpuset/system-background/tasks
 
-on property:init.svc.per_mgr=running
-    start per_proxy
+on property:init.svc.vendor.per_mgr=running
+    start vendor.per_proxy
 
-on property:sys.shutdown.requested=*
-    stop per_proxy
+on property:sys.powerctl=*
+    stop vendor.per_proxy
 
 on property:persist.sys.le_fast_chrg_enable=1
     write /sys/class/power_supply/battery/le_quick_charge_mode 0

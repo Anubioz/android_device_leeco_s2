@@ -43,7 +43,7 @@ $(WIDEVINE_SYMLINKS): $(LOCAL_INSTALLED_MODULE)
 ALL_DEFAULT_INSTALLED_MODULES += $(WIDEVINE_SYMLINKS)
 
 IMS_LIBS := libimscamera_jni.so libimsmedia_jni.so
-IMS_SYMLINKS := $(addprefix $(TARGET_OUT_APPS)/ims/lib/arm64/,$(notdir $(IMS_LIBS)))
+IMS_SYMLINKS := $(addprefix $(TARGET_OUT_APPS_PRIVILEGED)/ims/lib/arm64/,$(notdir $(IMS_LIBS)))
 $(IMS_SYMLINKS): $(LOCAL_INSTALLED_MODULE)
 	@echo "IMS lib link: $@"
 	@mkdir -p $(dir $@)
@@ -57,16 +57,16 @@ $(WCNSS_CFG_INI): $(LOCAL_INSTALLED_MODULE)
 	@echo "WCNSS_qcom_cfg.ini firmware link: $@"
 	@mkdir -p $(dir $@)
 	@rm -rf $@
-	$(hide) ln -sf /data/misc/wifi/$(notdir $@) $@
+	$(hide) ln -sf /data/vendor/wifi/$(notdir $@) $@
 
-WCNSS_DICT_DAT := $(TARGET_OUT_ETC)/firmware/wlan/prima/WCNSS_wlan_dictionary.dat
+WCNSS_DICT_DAT := $(TARGET_OUT_VENDOR)/firmware/wlan/prima/WCNSS_wlan_dictionary.dat
 $(WCNSS_DICT_DAT): $(LOCAL_INSTALLED_MODULE)
 	@echo "WCNSS_wlan_dictionary.dat firmware link: $@"
 	@mkdir -p $(dir $@)
 	@rm -rf $@
 	$(hide) ln -sf /persist/$(notdir $@) $@
 
-WLAN_MAC := $(TARGET_OUT_ETC)/firmware/wlan/prima/wlan_mac.bin
+WLAN_MAC := $(TARGET_OUT_VENDOR)/firmware/wlan/prima/wlan_mac.bin
 $(WLAN_MAC): $(LOCAL_INSTALLED_MODULE)
 	@echo "wlan_mac.bin firmware link: $@"
 	@mkdir -p $(dir $@)

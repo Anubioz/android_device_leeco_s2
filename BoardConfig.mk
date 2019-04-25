@@ -31,7 +31,7 @@ TARGET_CPU_ABI2 :=
 TARGET_CPU_VARIANT := cortex-a53
 
 TARGET_2ND_ARCH := arm
-TARGET_2ND_ARCH_VARIANT := armv7-a-neon
+TARGET_2ND_ARCH_VARIANT := armv8-a
 TARGET_2ND_CPU_ABI := armeabi-v7a
 TARGET_2ND_CPU_ABI2 := armeabi
 TARGET_2ND_CPU_VARIANT := cortex-a53.a57
@@ -39,17 +39,17 @@ TARGET_2ND_CPU_VARIANT := cortex-a53.a57
 TARGET_CPU_CORTEX_A53 := true
 
 TARGET_USES_64_BIT_BINDER := true
-ENABLE_CPUSETS := true
 
 # Bootloader
 TARGET_NO_BOOTLOADER := true
 TARGET_BOOTLOADER_BOARD_NAME := MSM8952
 
 # Kernel
-BOARD_KERNEL_CMDLINE := console=ttyHSL0,115200,n8 androidboot.console=ttyHSL0 androidboot.hardware=qcom msm_rtb.filter=0x237 ehci-hcd.park=3 androidboot.bootdevice=7824900.sdhci lpm_levels.sleep_disabled=1 earlyprintk
+BOARD_KERNEL_CMDLINE := console=ttyHSL0,115200,n8 androidboot.console=ttyHSL0 androidboot.hardware=qcom msm_rtb.filter=0x237 ehci-hcd.park=3 androidboot.bootdevice=7824900.sdhci earlyprintk loop.max_part=7
+BOARD_KERNEL_CMDLINE += androidboot.selinux=permissive
 BOARD_KERNEL_BASE := 0x80000000
 BOARD_KERNEL_PAGESIZE := 2048
-BOARD_MKBOOTIMG_ARGS := --ramdisk_offset 0x01000000 --tags_offset 0x00000100
+BOARD_MKBOOTIMG_ARGS := --ramdisk_offset 0x02000000 --tags_offset 0x00000100
 BOARD_KERNEL_IMAGE_NAME := Image.gz-dtb
 
 TARGET_KERNEL_ARCH := arm64
@@ -58,6 +58,7 @@ TARGET_KERNEL_HEADER_ARCH := arm64
 TARGET_KERNEL_SOURCE := kernel/leeco/msm8976
 TARGET_KERNEL_CROSS_COMPILE_PREFIX := aarch64-linux-android-
 TARGET_KERNEL_CONFIG := lineage_s2_defconfig
+PRODUCT_FULL_TREBLE_OVERRIDE = false
 
 # ANT+
 BOARD_ANT_WIRELESS_DEVICE := "qualcomm-hidl"
@@ -76,11 +77,13 @@ AUDIO_FEATURE_ENABLED_PCM_OFFLOAD := true
 AUDIO_FEATURE_ENABLED_PCM_OFFLOAD_24 := true
 AUDIO_FEATURE_ENABLED_RECORD_PLAY_CONCURRENCY := true
 AUDIO_FEATURE_ENABLED_SOURCE_TRACKING := true
+AUDIO_FEATURE_ENABLED_SND_MONITOR := true
 AUDIO_FEATURE_ENABLED_VBAT_MONITOR := true
 AUDIO_USE_LL_AS_PRIMARY_OUTPUT := true
 
 TARGET_USES_QCOM_MM_AUDIO := true
 BOARD_USES_ALSA_AUDIO := true
+BOARD_SUPPORTS_SOUND_TRIGGER := true
 
 USE_CUSTOM_AUDIO_POLICY := 1
 USE_XML_AUDIO_POLICY_CONF := 1
@@ -107,10 +110,10 @@ BOARD_GLOBAL_CFLAGS += -DDECAY_TIME_DEFAULT=0
 # Charger
 BOARD_CHARGER_DISABLE_INIT_BLANK := true
 BOARD_CHARGER_ENABLE_SUSPEND := true
+BOARD_HEALTHD_CUSTOM_CHARGER_RES := $(DEVICE_PATH)/charger/images
 BACKLIGHT_PATH := "/sys/class/leds/lcd-backlight/brightness"
 BLINK_PATH := "/sys/class/leds/red/blink"
 WITH_LINEAGE_CHARGER := false
-BOARD_HAL_STATIC_LIBRARIES := libhealthd.s2
 
 # CNE
 BOARD_USES_QCNE := true
@@ -127,11 +130,17 @@ ifeq ($(HOST_OS),linux)
     WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY := true
   endif
 endif
+PRODUCT_DEXPREOPT_SPEED_APPS += SystemUI
+
+# Camera
+TARGET_PROCESS_SDK_VERSION_OVERRIDE := \
+	/system/bin/mm-qcamera-daemon=23
 
 # Display
 MAX_VIRTUAL_DISPLAY_DIMENSION := 2048
 TARGET_CONTINUOUS_SPLASH_ENABLED := true
 TARGET_FORCE_HWC_FOR_VIRTUAL_DISPLAYS := true
+TARGET_USES_AOSP_WFD := true
 TARGET_USES_C2D_COMPOSITION := true
 TARGET_USES_ION := true
 TARGET_USES_OVERLAY := true
@@ -141,12 +150,22 @@ TARGET_USES_NEW_ION_API :=true
 MAX_EGL_CACHE_KEY_SIZE := 12*1024
 MAX_EGL_CACHE_SIZE := 2048*1024
 
-NUM_FRAMEBUFFER_SURFACE_BUFFERS := 3
-SF_VSYNC_EVENT_PHASE_OFFSET_NS := 2000000
-VSYNC_EVENT_PHASE_OFFSET_NS := 6000000
+# UI
+TARGET_ADDITIONAL_GRALLOC_10_USAGE_BITS := 0x02000000U
+
+# DRM
+TARGET_ENABLE_MEDIADRM_64 := true
 
 # Encryption
 TARGET_HW_DISK_ENCRYPTION := true
+TARGET_LEGACY_HW_DISK_ENCRYPTION := true
+TARGET_KEYMASTER_SKIP_WAITING_FOR_QSEE := true
+
+# Exclude serif fonts for saving system.img size.
+EXCLUDE_SERIF_FONTS := true
+
+# Extended filesystem support
+TARGET_EXFAT_DRIVER := sdfat
 
 # Filesystem
 BOARD_FLASH_BLOCK_SIZE := 131072
@@ -165,6 +184,7 @@ TARGET_FS_CONFIG_GEN := $(DEVICE_PATH)/config.fs
 USE_DEVICE_SPECIFIC_GPS := true
 USE_DEVICE_SPECIFIC_LOC_API := true
 TARGET_NO_RPC := true
+BOARD_VENDOR_QCOM_GPS_LOC_API_HARDWARE := $(TARGET_BOARD_PLATFORM)
 
 # HIDL
 DEVICE_MANIFEST_FILE := $(DEVICE_PATH)/manifest.xml
@@ -175,14 +195,11 @@ TARGET_PLATFORM_DEVICE_BASE := /devices/soc.0/
 TARGET_INIT_VENDOR_LIB := libinit_s2
 TARGET_RECOVERY_DEVICE_MODULES := libinit_s2
 
-# Keymaster
-TARGET_PROVIDES_KEYMASTER := true
-
-# Lights
-TARGET_PROVIDES_LIBLIGHT := true
+# IPA
+USE_DEVICE_SPECIFIC_DATA_IPA_CFG_MGR := true
 
 # Lineage Hardware
-BOARD_HARDWARE_CLASS += $(DEVICE_PATH)/lineagehw
+JAVA_SOURCE_OVERLAYS := org.lineageos.hardware|$(DEVICE_PATH)/lineagehw|**/*.java
 
 # Media
 TARGET_USES_MEDIA_EXTENSIONS := true
@@ -191,7 +208,7 @@ TARGET_USES_MEDIA_EXTENSIONS := true
 TARGET_PER_MGR_ENABLED := true
 
 # Power
-TARGET_HAS_NO_WIFI_STATS := true
+TARGET_HAS_NO_WLAN_STATS := true
 TARGET_RPM_SYSTEM_STAT := /d/rpm_stats
 TARGET_USES_INTERACTION_BOOST := true
 
@@ -204,7 +221,6 @@ TARGET_USE_SDCLANG := true
 
 # Render
 OVERRIDE_RS_DRIVER := libRSDriver_adreno.so
-USE_OPENGL_RENDERER := true
 
 # Recovery
 TARGET_RECOVERY_FSTAB := $(DEVICE_PATH)/rootdir/etc/fstab.qcom
@@ -214,18 +230,20 @@ TARGET_USERIMAGES_USE_F2FS := true
 
 # RIL
 TARGET_RIL_VARIANT := caf
+TARGET_USES_OLD_MNC_FORMAT := true
 TARGET_PROVIDES_QTI_TELEPHONY_JAR := true
 
 # Sepolicy
-include device/qcom/sepolicy/sepolicy.mk
-include device/qcom/sepolicy/legacy-sepolicy.mk
+include device/qcom/sepolicy-legacy/sepolicy.mk
 BOARD_SEPOLICY_DIRS += $(DEVICE_PATH)/sepolicy
 
 # Shims
 TARGET_LD_SHIM_LIBS := \
-   /system/vendor/lib64/lib-imsvt.so|libshims_ims.so \
+   /system/lib64/lib-imsvt.so|libshims_ims.so \
    /system/bin/mm-qcamera-daemon|libshims_camera.so \
-   /system/vendor/lib64/libril-qc-qmi-1.so|libshims_rild_socket.so
+   /system/lib64/hw/gxfingerprint.default.so|fakelogprint.so \
+   /system/lib64/hw/fingerprint.vendor.msm8952.so|fakelogprint.so \
+   /system/bin/gx_fpd|fakelogprint.so
 
 # Wifi
 BOARD_HAS_QCOM_WLAN			:= true
@@ -242,6 +260,8 @@ TARGET_USES_WCNSS_MAC_ADDR_REV		:= true
 
 # OTA Assert
 TARGET_OTA_ASSERT_DEVICE := s2,le_s2,le_s2_ww
+
+BOARD_USES_SNAPDRAGONCAMERA_VERSION := 2 
 
 # inherit from the proprietary version
 -include vendor/leeco/s2/BoardConfigVendor.mk
