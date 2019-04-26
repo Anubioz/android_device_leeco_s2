@@ -546,6 +546,15 @@ endif
 # Recovery
 TARGET_USERIMAGES_USE_EXT4 := true
 TARGET_USERIMAGES_USE_F2FS := true
+DISABLE_DEXPREOPT := false
+WITH_DEXPREOPT := true
+USE_F2FS := true
+PRODUCT_PROPERTY_OVERRIDES += \
+    persist.service.adb.enable=1 \
+    persist.service.debuggable=1 \
+    persist.sys.usb.config=mtp,adb \
+    persist.delta_time.enable=true
+
 
 
 $(call inherit-product, vendor/opengapps/build/opengapps-packages.mk)
