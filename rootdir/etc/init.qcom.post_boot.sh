@@ -79,6 +79,20 @@ vmpres_file_min=$((minfree_5 + (minfree_5 - rem_minfree_4)))
 echo $vmpres_file_min > /sys/module/lowmemorykiller/parameters/vmpressure_file_min
 echo 0 > /sys/module/lowmemorykiller/parameters/enable_adaptive_lmk
 
+# Enable B service adj transition
+#setprop ro.vendor.qti.sys.fw.bservice_enable true
+#setprop ro.vendor.qti.sys.fw.bservice_limit 5
+#setprop ro.vendor.qti.sys.fw.bservice_age 5000
+
+chown -h system /sys/devices/system/cpu/cpufreq/ondemand/sampling_rate
+chown -h system /sys/devices/system/cpu/cpufreq/ondemand/sampling_down_factor
+chown -h system /sys/devices/system/cpu/cpufreq/ondemand/io_is_busy
+
+chown -h system /sys/devices/platform/rs300000a7.65536/force_sync
+chown -h system /sys/devices/platform/rs300000a7.65536/sync_sts
+chown -h system /sys/devices/platform/rs300100a7.65536/force_sync
+chown -h system /sys/devices/platform/rs300100a7.65536/sync_sts
+
 setprop sys.post_boot.parsed 1
 setprop vendor.post_boot.parsed 1
 
@@ -128,31 +142,34 @@ do
     echo 40 > $gpu_bimc_io_percent
 done
 
-# enable governor for power cluster
+# Enable governor for power cluster
 echo 1 > /sys/devices/system/cpu/cpu0/online
 echo "interactive" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
-echo 80 > /sys/devices/system/cpu/cpu0/cpufreq/interactive/go_hispeed_load
+echo 95 > /sys/devices/system/cpu/cpu0/cpufreq/interactive/go_hispeed_load
 echo 20000 > /sys/devices/system/cpu/cpu0/cpufreq/interactive/timer_rate
 echo 0 > /sys/devices/system/cpu/cpu0/cpufreq/interactive/io_is_busy
-echo 40000 > /sys/devices/system/cpu/cpu0/cpufreq/interactive/min_sample_time
+echo 19000 > /sys/devices/system/cpu/cpu0/cpufreq/interactive/min_sample_time
 echo 400000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq
-echo 59000 > /sys/devices/system/cpu/cpu0/cpufreq/interactive/above_hispeed_delay
+echo 40000 > /sys/devices/system/cpu/cpu0/cpufreq/interactive/above_hispeed_delay
 echo 806400 > /sys/devices/system/cpu/cpu0/cpufreq/interactive/hispeed_freq
-echo "1 400000:60 691200:80" > /sys/devices/system/cpu/cpu0/cpufreq/interactive/target_loads
+echo 90 > /sys/devices/system/cpu/cpu0/cpufreq/interactive/target_loads
+echo 79000 > /sys/devices/system/cpu/cpu0/cpufreq/interactive/max_freq_hysteresis
+echo 80000 > /sys/devices/system/cpu/cpu0/cpufreq/interactive/timer_slack
 
-# enable governor for perf cluster
+# Enable governor for perf cluster
 echo 1 > /sys/devices/system/cpu/cpu4/online
 echo "interactive" > /sys/devices/system/cpu/cpu4/cpufreq/scaling_governor
-echo 85 > /sys/devices/system/cpu/cpu4/cpufreq/interactive/go_hispeed_load
+echo 95 > /sys/devices/system/cpu/cpu4/cpufreq/interactive/go_hispeed_load
 echo 20000 > /sys/devices/system/cpu/cpu4/cpufreq/interactive/timer_rate
 echo 0 > /sys/devices/system/cpu/cpu4/cpufreq/interactive/io_is_busy
-echo 40000 > /sys/devices/system/cpu/cpu4/cpufreq/interactive/min_sample_time
+echo 19000 > /sys/devices/system/cpu/cpu4/cpufreq/interactive/min_sample_time
 echo 40000 > /sys/devices/system/cpu/cpu4/cpufreq/interactive/sampling_down_factor
 echo 400000 > /sys/devices/system/cpu/cpu4/cpufreq/scaling_min_freq
-echo 60000 > /sys/devices/system/cpu/cpu4/cpufreq/interactive/max_freq_hysteresis
-echo 1113600 > /sys/devices/system/cpu/cpu4/cpufreq/interactive/hispeed_freq
-echo "19000 1113600:39000" > /sys/devices/system/cpu/cpu4/cpufreq/interactive/above_hispeed_delay
-echo "85 1113600:90 1612800:80" > /sys/devices/system/cpu/cpu4/cpufreq/interactive/target_loads
+echo 39000 > /sys/devices/system/cpu/cpu4/cpufreq/interactive/max_freq_hysteresis
+echo 883200 > /sys/devices/system/cpu/cpu4/cpufreq/interactive/hispeed_freq
+echo 80000 > /sys/devices/system/cpu/cpu4/cpufreq/interactive/timer_slack
+echo "19000 1382400:39000" > /sys/devices/system/cpu/cpu4/cpufreq/interactive/above_hispeed_delay
+echo "85 1382400:90 1747200:80" > /sys/devices/system/cpu/cpu4/cpufreq/interactive/target_loads
 
 # HMP Task packing settings for 8976
 echo 30 > /proc/sys/kernel/sched_small_task

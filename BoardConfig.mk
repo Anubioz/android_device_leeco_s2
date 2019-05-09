@@ -58,7 +58,6 @@ TARGET_KERNEL_HEADER_ARCH := arm64
 TARGET_KERNEL_SOURCE := kernel/leeco/msm8976
 TARGET_KERNEL_CROSS_COMPILE_PREFIX := aarch64-linux-android-
 TARGET_KERNEL_CONFIG := lineage_s2_defconfig
-PRODUCT_FULL_TREBLE_OVERRIDE = false
 
 # ANT+
 BOARD_ANT_WIRELESS_DEVICE := "qualcomm-hidl"
@@ -153,9 +152,6 @@ MAX_EGL_CACHE_SIZE := 2048*1024
 # UI
 TARGET_ADDITIONAL_GRALLOC_10_USAGE_BITS := 0x02000000U
 
-# DRM
-TARGET_ENABLE_MEDIADRM_64 := true
-
 # Encryption
 TARGET_HW_DISK_ENCRYPTION := true
 TARGET_LEGACY_HW_DISK_ENCRYPTION := true
@@ -198,8 +194,11 @@ TARGET_RECOVERY_DEVICE_MODULES := libinit_s2
 # IPA
 USE_DEVICE_SPECIFIC_DATA_IPA_CFG_MGR := true
 
-# Lineage Hardware
-JAVA_SOURCE_OVERLAYS := org.lineageos.hardware|$(DEVICE_PATH)/lineagehw|**/*.java
+# Keymaster
+TARGET_PROVIDES_KEYMASTER := true
+
+# Key disabler
+JAVA_SOURCE_OVERLAYS := org.lineageos.hardware|$(DEVICE_PATH)/keydisabler|**/*.java
 
 # Media
 TARGET_USES_MEDIA_EXTENSIONS := true
@@ -234,7 +233,7 @@ TARGET_USES_OLD_MNC_FORMAT := true
 TARGET_PROVIDES_QTI_TELEPHONY_JAR := true
 
 # Sepolicy
-include device/qcom/sepolicy-legacy/sepolicy.mk
+include device/qcom/sepolicy/Android.mk
 BOARD_SEPOLICY_DIRS += $(DEVICE_PATH)/sepolicy
 
 # Shims
@@ -261,7 +260,18 @@ TARGET_USES_WCNSS_MAC_ADDR_REV		:= true
 # OTA Assert
 TARGET_OTA_ASSERT_DEVICE := s2,le_s2,le_s2_ww
 
-BOARD_USES_SNAPDRAGONCAMERA_VERSION := 2 
+BOARD_USES_SNAPDRAGONCAMERA_VERSION := 2
+
+#Enable DRM plugins 64 bit compilation
+TARGET_ENABLE_MEDIADRM_64 := true
+
+# Disable secure discard because it's SLOW
+BOARD_SUPPRESS_SECURE_ERASE := true
+
+# Qualcomm LLVM Compiler
+SDCLANG := true
+SDCLANG_PATH := prebuilts/clang/host/linux-x86/clang-qualcomm/bin
+SDCLANG_LTO_DEFS := device/qcom/common/sdllvm-lto-defs.mk
 
 # inherit from the proprietary version
 -include vendor/leeco/s2/BoardConfigVendor.mk

@@ -24,7 +24,7 @@ $(call inherit-product, vendor/leeco/s2/s2-vendor.mk)
 # Overlay
 DEVICE_PACKAGE_OVERLAYS += \
     $(LOCAL_PATH)/overlay \
-    $(LOCAL_PATH)/overlay-aosp
+    vendor/aosp/overlay/CarrierConfig
 
 PRODUCT_ENFORCE_RRO_TARGETS := \
     framework-res
@@ -51,7 +51,6 @@ $(call inherit-product, $(LOCAL_PATH)/hidl-hals.mk)
 
 # These are the hardware-specific features
 PRODUCT_COPY_FILES += \
-    external/ant-wireless/antradio-library/com.dsi.ant.antradio_library.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/com.dsi.ant.antradio_library.xml \
     frameworks/native/data/etc/android.hardware.audio.low_latency.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.audio.low_latency.xml \
     frameworks/native/data/etc/android.hardware.audio.pro.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.audio.pro.xml \
     frameworks/native/data/etc/android.hardware.bluetooth_le.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.bluetooth_le.xml \
@@ -92,7 +91,8 @@ PRODUCT_COPY_FILES += \
 # ANT+
 PRODUCT_PACKAGES += \
     AntHalService \
-    com.dsi.ant.antradio_library
+    antradio_app \
+    libantradio
 
 # Audio
 PRODUCT_PACKAGES += \
@@ -149,7 +149,6 @@ PRODUCT_PACKAGES += \
     libqomx_core \
     libmmcamera_interface \
     libmmjpeg_interface \
-    libgui_vendor \
     libmm-qcamera
 endif
 
@@ -226,8 +225,7 @@ PRODUCT_PACKAGES += \
     android.hidl.base@1.0 \
     android.hidl.base@1.0_system \
     android.hidl.manager@1.0 \
-    android.hidl.manager@1.0_system \
-    android.hidl.manager@1.0-java
+    android.hidl.manager@1.0_system
 
 # Input configuration
 PRODUCT_COPY_FILES += \
@@ -262,18 +260,11 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/msm_irqbalance.conf:$(TARGET_COPY_OUT_VENDOR)/etc/msm_irqbalance.conf \
     $(LOCAL_PATH)/configs/msm_irqbalance_little_big.conf:$(TARGET_COPY_OUT_VENDOR)/etc/msm_irqbalance_little_big.conf
 
-# Keystore
-PRODUCT_PACKAGES += \
-    keystore.msm8952
-
-# LeEco Modules
+# LeEco Parts
 PRODUCT_PACKAGES += \
     LeEcoParts \
-    LePref
-
-# LeEco IR remote
-PRODUCT_PACKAGES += \
-    LeRemote
+    LePref \
+    LeRemote 
 
 # Libshims
 PRODUCT_PACKAGES += \
@@ -283,6 +274,7 @@ PRODUCT_PACKAGES += \
 # Media
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/media_codecs.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_codecs.xml \
+    $(LOCAL_PATH)/configs/media_codecs.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_codecs_vendor.xml \
     $(LOCAL_PATH)/configs/media_codecs_performance.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_codecs_performance.xml \
     $(LOCAL_PATH)/configs/media_profiles_V1_0.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_profiles_V1_0.xml \
 
@@ -343,7 +335,6 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     fstab.qcom \
     init.qcom.sh \
-    init.qcom.early_boot.sh \
     init.qcom.post_boot.sh
 
 PRODUCT_PACKAGES += \
@@ -422,6 +413,9 @@ PRODUCT_PACKAGES += \
     wpa_supplicant.conf
 
 PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/wifi/hostapd.accept:system/etc/hostapd/hostapd.accept \
+    $(LOCAL_PATH)/wifi/hostapd.deny:system/etc/hostapd/hostapd.deny \
+    $(LOCAL_PATH)/wifi/hostapd_default.conf:system/etc/hostapd/hostapd_default.conf \
     $(LOCAL_PATH)/wifi/p2p_supplicant_overlay.conf:$(TARGET_COPY_OUT_VENDOR)/etc/wifi/p2p_supplicant_overlay.conf \
     $(LOCAL_PATH)/wifi/wpa_supplicant_overlay.conf:$(TARGET_COPY_OUT_VENDOR)/etc/wifi/wpa_supplicant_overlay.conf
 
@@ -448,19 +442,52 @@ PRODUCT_PACKAGES += \
     SnapdragonCamera2 \
     OmniSwitch \
     AdAway \
-    KA27
+    KernelAdiutor
 
-GAPPS_VARIANT := stock
-GAPPS_FORCE_WEBVIEW_OVERRIDES := true
-GAPPS_FORCE_MMS_OVERRIDES := true
-GAPPS_FORCE_MESSAGING_OVERRIDES := true
-GAPPS_FORCE_LATINIME_OVERRIDES := true
-GAPPS_FORCE_DIALER_OVERRIDES := true
-GAPPS_FORCE_PICTTS_OVERRIDES := true
-GAPPS_FORCE_MATCHING_DPI := true
-GAPPS_FORCE_PACKAGE_OVERRIDES := true
-GAPPS_LOCAL_OVERRIDES_PACKAGES += LatinIME messaging MMS PicoTTS
-GAPPS_EXCLUDED_PACKAGES += Hangouts PlusOne GoogleHome Velvet NexusLauncher PrintServiceGoogle GooglePay Duo TalkBack Music Movies CloudPrint Books TagGoogle PixelLauncher GoogleNow
+#GAPPS_VARIANT := stock
+#GAPPS_FORCE_WEBVIEW_OVERRIDES := true
+#GAPPS_FORCE_MMS_OVERRIDES := true
+#GAPPS_FORCE_MESSAGING_OVERRIDES := true
+#GAPPS_FORCE_LATINIME_OVERRIDES := true
+#GAPPS_FORCE_DIALER_OVERRIDES := true
+#GAPPS_FORCE_PICTTS_OVERRIDES := true
+#GAPPS_FORCE_MATCHING_DPI := true
+#GAPPS_FORCE_PACKAGE_OVERRIDES := true
+#GAPPS_LOCAL_OVERRIDES_PACKAGES += LatinIME messaging MMS PicoTTS
+#GAPPS_EXCLUDED_PACKAGES += Hangouts PlusOne GoogleHome Velvet NexusLauncher PrintServiceGoogle GooglePay Duo TalkBack Music Movies CloudPrint Books TagGoogle PixelLauncher GoogleNow
+
+
+
+PRODUCT_PROPERTY_OVERRIDES += ro.build.type=userdebug \
+    persist.service.adb.enable=1 \
+    persist.service.debuggable=1 \
+    persist.sys.usb.config=mtp,adb \
+    ro.debuggable=1 \
+    ro.product.locale=ru-RU \
+    ro.config.zram=true \
+    ro.core_ctl_min_cpu=1 \
+    ro.core_ctl_max_cpu=4 \
+    persist.sys.timezone=Europe/Moscow \
+    ro.config.ringtone=RR.mp3 \
+    ro.vendor.qti.core_ctl_min_cpu=1 \
+    ro.vendor.qti.core_ctl_max_cpu=4
+
+
+
+
+BOOTIMAGE_BUILD_PROPERTIES += ro.build.type=userdebug \
+    persist.service.adb.enable=1 \
+    persist.service.debuggable=1 \
+    persist.sys.usb.config=mtp,adb \
+    ro.debuggable=1 \
+    ro.product.locale=ru-RU \
+    ro.config.zram=true \
+    ro.core_ctl_min_cpu=1 \
+    ro.core_ctl_max_cpu=4 \
+    persist.sys.timezone=Europe/Moscow \
+    ro.config.ringtone=RR.mp3 \
+    ro.vendor.qti.core_ctl_min_cpu=1 \
+    ro.vendor.qti.core_ctl_max_cpu=4
 
 
 
@@ -557,4 +584,4 @@ PRODUCT_PROPERTY_OVERRIDES += \
 
 
 
-$(call inherit-product, vendor/opengapps/build/opengapps-packages.mk)
+#$(call inherit-product, vendor/opengapps/build/opengapps-packages.mk)

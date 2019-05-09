@@ -78,6 +78,7 @@ dalvik.vm.image-dex2oat-threads=4
 
 # Fastcharge
 persist.sys.le_fast_chrg_enable=1
+persist.hvdcp.allow_opti=1
 
 # Fingerprint
 persist.qfp=false
@@ -99,10 +100,6 @@ debug.sf.latch_unsignaled=1
 debug.egl.hw=1
 debug.enable.sglscale=1
 debug.mdpcomp.logs=0
-debug.cpurend.vsync=false
-debug.sf.disable_backpressure=1 
-debug.sf.recomputecrop=0
-debug.sf.latch_unsignaled=1
 dev.pm.dyn_samplingrate=1
 persist.demo.hdmirotationlock=false
 persist.hwc.mdpcomp.enable=true
@@ -113,10 +110,6 @@ qcom.hw.aac.encoder=true
 ro.opengles.version=196610
 ro.sf.lcd_density=420
 ro.qualcomm.cabl=0
-vendor.display.disable_skip_validate=1
-vendor.display.enable_default_color_mode=1
-vendor.display.perf_hint_window=50
-vendor.gralloc.enable_fb_ubwc=1
 
 # Media
 av.debug.disable.pers.cache=1
@@ -126,8 +119,11 @@ mmp.enable.3g2=true
 media.aac_51_output_enabled=true
 mm.enable.qcom_parser=4194303
 
+# Memory optimizations
+ro.vendor.qti.sys.fw.bservice_enable=true
+
 # Netmgrd
-ro.vendor.use_data_netmgrd=true
+ro.use_data_netmgrd=true
 persist.data.netmgrd.qos.enable=true
 persist.data.mode=concurrent
 
@@ -150,6 +146,8 @@ vendor.perf.iop_v3.enable=1
 persist.vendor.qti.games.gt.prof=1
 ro.vendor.at_library=libqti-at.so
 ro.vendor.extension_library=libqti-perfd-client.so
+ro.vendor.qti.core_ctl_min_cpu=1
+ro.vendor.qti.core_ctl_max_cpu=8
 ro.vendor.qti.sys.fw.bg_apps_limit=60
 ro.vendor.qti.am.reschedule_service=true
 ro.vendor.qti.sys.fw.bservice_enable=true
@@ -229,21 +227,15 @@ ro.audio.flinger_standbytime_ms=300
 ro.min.fling_velocity=160
 ro.max.fling_velocity=20000
 
-# GCAM Fixes
-camera.HAL3.enabled=1
-persist.camera.eis.enable=1
-camera.eis.enable=1
-persist.camera.is_mode=4
-camera.is_mode=4
-persist.camera.disable_zsl_mode=1
-camera.disable_zsl_mode=1
-persist.camera.gyro.android=4
-camera.gyro.android=4
-persist.camera.tof.direct=1
-camera.tof.direct=1
-persist.camera.tnr.preview=1
-camera.tnr.preview=1
-persist.camera.tnr.video=1
-camera.tnr.video=1
-ro.camera.notify_nfc=1
-camera.notify_nfc=1
+# RR
+persist.sys.usb.config=mtp,adb
+ro.product.locale=ru-RU
+ro.config.zram=true
+ro.core_ctl_min_cpu=1
+ro.core_ctl_max_cpu=4
+ro.vendor.qti.core_ctl_min_cpu=1
+ro.vendor.qti.core_ctl_max_cpu=4
+
+persist.sys.timezone=Europe/Moscow
+ro.config.ringtone=RR.mp3
+

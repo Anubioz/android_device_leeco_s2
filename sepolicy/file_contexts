@@ -5,10 +5,13 @@
 /(vendor|system/vendor|system)/bin/gx_fpd                   u:object_r:goodix_exec:s0
 
 # Fingerprint
-/system/vendor/bin/hw/android\.hardware\.biometrics\.fingerprint@2\.0-service-custom u:object_r:hal_fingerprint_default_exec:s0
+/system/vendor/bin/hw/android\.hardware\.biometrics\.fingerprint@2\.1-service\.leeco_s2 u:object_r:hal_fingerprint_default_exec:s0
+
+# Camera
+/data/vendor/qcam(/.*)?                                     u:object_r:vendor_camera_data_file:s0
 
 # Consumer IR
-/(vendor|system/vendor)/bin/hw/android\.hardware\.ir@1\.0-service\.leeco_8952                  u:object_r:hal_ir_default_exec:s0
+/(vendor|system/vendor)/bin/hw/android\.hardware\.ir@1\.0-service\.leeco                  u:object_r:hal_ir_default_exec:s0
 
 # Radio
 /data/misc/radio/qcril.db                                   u:object_r:nv_data_file:s0
@@ -29,7 +32,5 @@
 /dev/goodix_fp                                             u:object_r:goodix_device:s0
 /data/goodix(/.*)?                                         u:object_r:goodix_data_file:s0
 /dev/i2c_smartpa                                           u:object_r:smartpa_device:s0
-
-/system/bin/perfservice                                    u:object_r:perfservice_exec:s0
 
 /sys/remote/enable                                         u:object_r:sysfs_ir_enable:s0

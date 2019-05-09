@@ -73,6 +73,10 @@ vendor/lib64/libbtnv.so|136dc47f7d16a841e9c6ad909753e96a41392534
 vendor/lib/vendor.qti.hardware.fm@1.0.so|3c725ea0f85bf709bcf77761d707abf7660b1c4d
 vendor/lib64/vendor.qti.hardware.fm@1.0.so|dc576dfcb0bf390a106b5ed8861e7f547110cbf1
 
+# Bluetooth - aptX - from mata-user 9 PPR1.181005.099 413 release-keys
+lib64/libaptX_encoder.so|0cebad28afcf29f931bdc2d24fce2730dc882ecf
+lib64/libaptXHD_encoder.so|90f47f10af28b3ead143200cb4370b847c513127
+
 # Charger
 vendor/bin/hvdcp_opti
 
@@ -205,8 +209,8 @@ vendor/lib/vendor.qti.hardware.qteeconnector@1.0_vendor.so
 vendor/lib64/hw/vendor.qti.hardware.qteeconnector@1.0-impl.so
 vendor/lib64/vendor.qti.hardware.qteeconnector@1.0_vendor.so
 
-# Gatekeeper
-vendor/lib64/hw/gatekeeper.msm8952.so
+# Gatekeeper - from - EUi 6.0.030s
+vendor/lib64/hw/gatekeeper.msm8952.so|84bfbe108138742ab7b57b231ea7127a772ffbee
 
 # GPS - from Mi A2 Lite daisy_sprout 9 PKQ1.180917.001/V10.0.3.0.PDLMIXM release-keys
 lib/vendor.qti.gnss@1.0.so|eddf81581610bdad45674d31e9b88eb8a9d08784
@@ -318,6 +322,9 @@ vendor/lib64/hw/vulkan.msm8952.so|a442c83cc25798de78fa0336358a85c8a7daccc3
 
 # IPA
 vendor/bin/ipacm-diag
+
+# Keystore - from - EUi 6.0.030s
+vendor/lib64/hw/keystore.msm8952.so|fc7b3c8789cf160585cae0c89bc95d4ef9d29c9a
 
 # Listen
 vendor/lib/hw/sound_trigger.primary.msm8952.so

@@ -1,1 +1,1 @@
-add_lunch_combo dot_s2-userdebug
+add_lunch_combo rr_s2-userdebug
