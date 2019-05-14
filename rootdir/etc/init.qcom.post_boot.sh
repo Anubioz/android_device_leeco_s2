@@ -79,19 +79,17 @@ vmpres_file_min=$((minfree_5 + (minfree_5 - rem_minfree_4)))
 echo $vmpres_file_min > /sys/module/lowmemorykiller/parameters/vmpressure_file_min
 echo 0 > /sys/module/lowmemorykiller/parameters/enable_adaptive_lmk
 
-# Enable B service adj transition
-#setprop ro.vendor.qti.sys.fw.bservice_enable true
-#setprop ro.vendor.qti.sys.fw.bservice_limit 5
-#setprop ro.vendor.qti.sys.fw.bservice_age 5000
+setprop ro.debuggable 1
+setprop service.adb.root 1
 
 chown -h system /sys/devices/system/cpu/cpufreq/ondemand/sampling_rate
 chown -h system /sys/devices/system/cpu/cpufreq/ondemand/sampling_down_factor
 chown -h system /sys/devices/system/cpu/cpufreq/ondemand/io_is_busy
 
-chown -h system /sys/devices/platform/rs300000a7.65536/force_sync
-chown -h system /sys/devices/platform/rs300000a7.65536/sync_sts
-chown -h system /sys/devices/platform/rs300100a7.65536/force_sync
-chown -h system /sys/devices/platform/rs300100a7.65536/sync_sts
+#chown -h system /sys/devices/platform/rs300000a7.65536/force_sync
+#chown -h system /sys/devices/platform/rs300000a7.65536/sync_sts
+#chown -h system /sys/devices/platform/rs300100a7.65536/force_sync
+#chown -h system /sys/devices/platform/rs300100a7.65536/sync_sts
 
 setprop sys.post_boot.parsed 1
 setprop vendor.post_boot.parsed 1
@@ -142,6 +140,7 @@ do
     echo 40 > $gpu_bimc_io_percent
 done
 
+
 # Enable governor for power cluster
 echo 1 > /sys/devices/system/cpu/cpu0/online
 echo "interactive" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
@@ -170,6 +169,32 @@ echo 883200 > /sys/devices/system/cpu/cpu4/cpufreq/interactive/hispeed_freq
 echo 80000 > /sys/devices/system/cpu/cpu4/cpufreq/interactive/timer_slack
 echo "19000 1382400:39000" > /sys/devices/system/cpu/cpu4/cpufreq/interactive/above_hispeed_delay
 echo "85 1382400:90 1747200:80" > /sys/devices/system/cpu/cpu4/cpufreq/interactive/target_loads
+
+
+#echo 1 > /sys/devices/system/cpu/cpu0/online
+#echo "lionfish" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+#echo 95 > /sys/devices/system/cpu/cpu0/cpufreq/lionfish/down_threshold
+#echo 1 > /sys/devices/system/cpu/cpu0/cpufreq/lionfish/freq_step
+#echo 1 > /sys/devices/system/cpu/cpu0/cpufreq/lionfish/ignore_nice_load
+#echo 800000 > /sys/devices/system/cpu/cpu0/cpufreq/lionfish/jump_level
+#echo 99 > /sys/devices/system/cpu/cpu0/cpufreq/lionfish/jump_threshold
+#echo 1 > /sys/devices/system/cpu/cpu0/cpufreq/lionfish/sampling_down_factor
+#echo 50000 > /sys/devices/system/cpu/cpu0/cpufreq/lionfish/sampling_rate
+#echo 10000 > /sys/devices/system/cpu/cpu0/cpufreq/lionfish/sampling_rate_min
+#echo 99 > /sys/devices/system/cpu/cpu0/cpufreq/lionfish/up_threshold
+
+# Enable governor for perf cluster
+#echo 1 > /sys/devices/system/cpu/cpu4/online
+#echo "lionfish" > /sys/devices/system/cpu/cpu4/cpufreq/scaling_governor
+#echo 95 > /sys/devices/system/cpu/cpu4/cpufreq/lionfish/down_threshold
+#echo 1 > /sys/devices/system/cpu/cpu4/cpufreq/lionfish/freq_step
+#echo 1 > /sys/devices/system/cpu/cpu4/cpufreq/lionfish/ignore_nice_load
+#echo 800000 > /sys/devices/system/cpu/cpu4/cpufreq/lionfish/jump_level
+#echo 99 > /sys/devices/system/cpu/cpu4/cpufreq/lionfish/jump_threshold
+#echo 1 > /sys/devices/system/cpu/cpu4/cpufreq/lionfish/sampling_down_factor
+#echo 50000 > /sys/devices/system/cpu/cpu4/cpufreq/lionfish/sampling_rate
+#echo 10000 > /sys/devices/system/cpu/cpu4/cpufreq/lionfish/sampling_rate_min
+#echo 99 > /sys/devices/system/cpu/cpu4/cpufreq/lionfish/up_threshold
 
 # HMP Task packing settings for 8976
 echo 30 > /proc/sys/kernel/sched_small_task
@@ -205,10 +230,10 @@ echo N > /sys/module/lpm_levels/system/a53/a53-l2-gdhs/idle_enabled
 echo N > /sys/module/lpm_levels/system/a72/a72-l2-gdhs/idle_enabled
 
 # Enable sched guided freq control
-echo 1 > /sys/devices/system/cpu/cpu0/cpufreq/interactive/use_sched_load
-echo 1 > /sys/devices/system/cpu/cpu0/cpufreq/interactive/use_migration_notif
-echo 1 > /sys/devices/system/cpu/cpu4/cpufreq/interactive/use_sched_load
-echo 1 > /sys/devices/system/cpu/cpu4/cpufreq/interactive/use_migration_notif
+#echo 1 > /sys/devices/system/cpu/cpu0/cpufreq/interactive/use_sched_load
+#echo 1 > /sys/devices/system/cpu/cpu0/cpufreq/interactive/use_migration_notif
+#echo 1 > /sys/devices/system/cpu/cpu4/cpufreq/interactive/use_sched_load
+#echo 1 > /sys/devices/system/cpu/cpu4/cpufreq/interactive/use_migration_notif
 echo 50000 > /proc/sys/kernel/sched_freq_inc_notify
 echo 50000 > /proc/sys/kernel/sched_freq_dec_notify
 
@@ -220,10 +245,76 @@ echo 130 > /proc/sys/kernel/sched_grp_upmigrate
 echo 110 > /proc/sys/kernel/sched_grp_downmigrate
 echo   1 > /proc/sys/kernel/sched_enable_thread_grouping
 
+#echo 5 > /sys/class/kgsl/kgsl-3d0/min_pwrlevel
+#echo 266666667 > /sys/class/kgsl/kgsl-3d0/devfreq/min_freq
+#echo 600000000 > /sys/class/kgsl/kgsl-3d0/devfreq/max_freq
+#echo 1804800 > /sys/devices/system/cpu/cpu7/cpufreq/scaling_max_freq
+#chmod 644 /sys/devices/system/cpu/cpu7/cpufreq/scaling_max_freq
+#echo 1 > /sys/devices/system/cpu/cpu7/online
+#echo 1804800 > /sys/devices/system/cpu/cpu6/cpufreq/scaling_max_freq
+#chmod 644 /sys/devices/system/cpu/cpu6/cpufreq/scaling_max_freq
+#echo 1 > /sys/devices/system/cpu/cpu6/online
+#echo 1804800 > /sys/devices/system/cpu/cpu5/cpufreq/scaling_max_freq
+#chmod 644 /sys/devices/system/cpu/cpu5/cpufreq/scaling_max_freq
+#echo 1 > /sys/devices/system/cpu/cpu5/online
+#echo 1804800 > /sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq
+#chmod 644 /sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq
+#echo 1 > /sys/devices/system/cpu/cpu4/online
+#echo 1804800 > /sys/devices/system/cpu/cpu3/cpufreq/scaling_max_freq
+#chmod 644 /sys/devices/system/cpu/cpu3/cpufreq/scaling_max_freq
+#echo 1 > /sys/devices/system/cpu/cpu3/online
+#echo 1804800 > /sys/devices/system/cpu/cpu2/cpufreq/scaling_max_freq
+#chmod 644 /sys/devices/system/cpu/cpu2/cpufreq/scaling_max_freq
+#echo 1 > /sys/devices/system/cpu/cpu2/online
+#echo 1804800 > /sys/devices/system/cpu/cpu1/cpufreq/scaling_max_freq
+#chmod 644 /sys/devices/system/cpu/cpu1/cpufreq/scaling_max_freq
+#echo 1 > /sys/devices/system/cpu/cpu1/online
+#echo 1804800 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
+#chmod 644 /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
+##echo 0:1305600 1:1305600 2:1017600 3:1017600 4:1248000 5:11248000 6:1382400 7:1382400 > /sys/module/cpu_boost/parameters/input_boost_freq
+##echo 1000 > /sys/module/cpu_boost/parameters/input_boost_ms
+##echo 1190400 > /sys/module/cpu_boost/parameters/sync_threshold
+#echo lionfish > /sys/devices/system/cpu/cpu7/cpufreq/scaling_governor
+#chmod 644 /sys/devices/system/cpu/cpu7/cpufreq/scaling_governor
+#echo lionfish > /sys/devices/system/cpu/cpu6/cpufreq/scaling_governor
+#chmod 644 /sys/devices/system/cpu/cpu6/cpufreq/scaling_governor
+#echo lionfish > /sys/devices/system/cpu/cpu5/cpufreq/scaling_governor
+#chmod 644 /sys/devices/system/cpu/cpu5/cpufreq/scaling_governor
+#echo lionfish > /sys/devices/system/cpu/cpu4/cpufreq/scaling_governor
+#chmod 644 /sys/devices/system/cpu/cpu4/cpufreq/scaling_governor
+#echo lionfish > /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor
+#chmod 644 /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor
+#echo lionfish > /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor
+#chmod 644 /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor
+#echo lionfish > /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor
+#chmod 644 /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor
+#echo lionfish > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+#chmod 644 /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+#echo 2 > /sys/class/kgsl/kgsl-3d0/max_pwrlevel
+#echo 600000000 > /sys/class/kgsl/kgsl-3d0/max_gpuclk
+#echo 1 > /sys/module/simple_gpu_algorithm/parameters/simple_gpu_activate
+#echo 0 > /sys/module/state_notifier/parameters/debug_mask
+#echo 400000 > /sys/devices/system/cpu/cpu7/cpufreq/scaling_min_freq
+#chmod 644 /sys/devices/system/cpu/cpu7/cpufreq/scaling_min_freq
+#echo 400000 > /sys/devices/system/cpu/cpu6/cpufreq/scaling_min_freq
+#chmod 644 /sys/devices/system/cpu/cpu6/cpufreq/scaling_min_freq
+#echo 400000 > /sys/devices/system/cpu/cpu5/cpufreq/scaling_min_freq
+#chmod 644 /sys/devices/system/cpu/cpu5/cpufreq/scaling_min_freq
+#echo 400000 > /sys/devices/system/cpu/cpu4/cpufreq/scaling_min_freq
+#chmod 644 /sys/devices/system/cpu/cpu4/cpufreq/scaling_min_freq
+#echo 400000 > /sys/devices/system/cpu/cpu3/cpufreq/scaling_min_freq
+#chmod 644 /sys/devices/system/cpu/cpu3/cpufreq/scaling_min_freq
+#echo 400000 > /sys/devices/system/cpu/cpu2/cpufreq/scaling_min_freq
+#chmod 644 /sys/devices/system/cpu/cpu2/cpufreq/scaling_min_freq
+#echo 400000 > /sys/devices/system/cpu/cpu1/cpufreq/scaling_min_freq
+#chmod 644 /sys/devices/system/cpu/cpu1/cpufreq/scaling_min_freq
+#echo 400000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq
+#chmod 644 /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq
+
 # Parse misc partition path and set property
 misc_link=$(ls -l /dev/block/bootdevice/by-name/misc)
 real_path=${misc_link##*>}
 setprop persist.vendor.mmi.misc_dev_path $real_path
 
 # Set BFQ as default io-schedular after boot
-setprop sys.io.scheduler "bfq"
+setprop sys.io.scheduler "cfq"

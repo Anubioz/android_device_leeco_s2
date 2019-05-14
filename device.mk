@@ -51,6 +51,7 @@ $(call inherit-product, $(LOCAL_PATH)/hidl-hals.mk)
 
 # These are the hardware-specific features
 PRODUCT_COPY_FILES += \
+    external/ant-wireless/antradio-library/com.dsi.ant.antradio_library.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/com.dsi.ant.antradio_library.xml \
     frameworks/native/data/etc/android.hardware.audio.low_latency.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.audio.low_latency.xml \
     frameworks/native/data/etc/android.hardware.audio.pro.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.audio.pro.xml \
     frameworks/native/data/etc/android.hardware.bluetooth_le.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.bluetooth_le.xml \
@@ -92,6 +93,7 @@ PRODUCT_COPY_FILES += \
 PRODUCT_PACKAGES += \
     AntHalService \
     antradio_app \
+    com.dsi.ant.antradio_library \
     libantradio
 
 # Audio
@@ -139,9 +141,9 @@ PRODUCT_COPY_FILES += \
 PRODUCT_COPY_FILES +=  \
     $(LOCAL_PATH)/audio/dax-default.xml:$(TARGET_COPY_OUT_VENDOR)/etc/dolby/dax-default.xml
 
-# Camera
+# Bluetooth
 PRODUCT_PACKAGES += \
-    Snap
+    libbt-vendor
 
 ifneq ($(USE_PROPRIETARY_CAMERA),true)
 PRODUCT_PACKAGES += \
@@ -187,6 +189,10 @@ PRODUCT_PACKAGES += \
 
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/ad_calib.cfg:system/etc/ad_calib.cfg
+
+# Doze mode
+PRODUCT_PACKAGES += \
+    Doze
 
 # Fake logprint for fingerprint libs
 PRODUCT_PACKAGES += \
@@ -335,6 +341,7 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     fstab.qcom \
     init.qcom.sh \
+    init.qcom.early_boot.sh \
     init.qcom.post_boot.sh
 
 PRODUCT_PACKAGES += \
@@ -355,6 +362,10 @@ PRODUCT_PACKAGES += \
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/seccomp_policy/mediacodec.policy:$(TARGET_COPY_OUT_VENDOR)/etc/seccomp_policy/mediacodec.policy \
     $(LOCAL_PATH)/seccomp_policy/mediaextractor.policy:$(TARGET_COPY_OUT_VENDOR)/etc/seccomp_policy/mediaextractor.policy
+
+# non-sucking inputrc defaults
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/.inputrc:system/etc/inputrc 
 
 # Sensors
 PRODUCT_PACKAGES += \
@@ -426,7 +437,9 @@ PRODUCT_PACKAGES += \
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/wifi/WCNSS_cfg.dat:system/etc/firmware/wlan/prima/WCNSS_cfg.dat \
     $(LOCAL_PATH)/wifi/WCNSS_qcom_cfg.ini:system/etc/firmware/wlan/prima/WCNSS_qcom_cfg.ini \
-    $(LOCAL_PATH)/wifi/WCNSS_qcom_cfg.ini:$(TARGET_COPY_OUT_VENDOR)/etc/wifi/WCNSS_qcom_cfg.ini
+    $(LOCAL_PATH)/wifi/WCNSS_qcom_cfg.ini:$(TARGET_COPY_OUT_VENDOR)/etc/wifi/WCNSS_qcom_cfg.ini \
+    $(LOCAL_PATH)/wifi/WCNSS_cfg.dat:$(TARGET_COPY_OUT_VENDOR)/firmware/wlan/prima/WCNSS_cfg.dat \
+    $(LOCAL_PATH)/wifi/WCNSS_qcom_cfg.ini:$(TARGET_COPY_OUT_VENDOR)/firmware/wlan/prima/WCNSS_qcom_cfg.ini
 
 # SDcard
 PRODUCT_CHARACTERISTICS := nosdcard
@@ -439,22 +452,30 @@ PRODUCT_SYSTEM_PROPERTY_BLACKLIST := \
 
 PRODUCT_PACKAGES += \
     parted \
-    SnapdragonCamera2 \
     OmniSwitch \
     AdAway \
-    KernelAdiutor
+    GoogleCameraMod \
+    Snap
+#    TitaniumBackup \
+#    ExKernelManager \
+#    Substratum \
+#    BigBlu \
+#    PitchBlack
 
-#GAPPS_VARIANT := stock
-#GAPPS_FORCE_WEBVIEW_OVERRIDES := true
-#GAPPS_FORCE_MMS_OVERRIDES := true
-#GAPPS_FORCE_MESSAGING_OVERRIDES := true
-#GAPPS_FORCE_LATINIME_OVERRIDES := true
-#GAPPS_FORCE_DIALER_OVERRIDES := true
-#GAPPS_FORCE_PICTTS_OVERRIDES := true
-#GAPPS_FORCE_MATCHING_DPI := true
-#GAPPS_FORCE_PACKAGE_OVERRIDES := true
-#GAPPS_LOCAL_OVERRIDES_PACKAGES += LatinIME messaging MMS PicoTTS
-#GAPPS_EXCLUDED_PACKAGES += Hangouts PlusOne GoogleHome Velvet NexusLauncher PrintServiceGoogle GooglePay Duo TalkBack Music Movies CloudPrint Books TagGoogle PixelLauncher GoogleNow
+GAPPS_VARIANT := mini
+GAPPS_FORCE_WEBVIEW_OVERRIDES := true
+GAPPS_FORCE_MMS_OVERRIDES := true
+GAPPS_FORCE_MESSAGING_OVERRIDES := true
+GAPPS_FORCE_LATINIME_OVERRIDES := true
+GAPPS_FORCE_DIALER_OVERRIDES := false
+GAPPS_FORCE_BROWSER_OVERRIDES := true
+GAPPS_FORCE_PIXEL_LAUNCHER := false
+GAPPS_FORCE_MATCHING_DPI := true
+GAPPS_LOCAL_OVERRIDES_PACKAGES += LatinIME messaging MMS PicoTTS ContactsGoogle
+GAPPS_BYPASS_PACKAGE_OVERRIDES := Dialer
+GAPPS_EXCLUDED_PACKAGES += Hangouts PlusOne PixelLauncher GoogleHome Velvet NexusLauncher PrintServiceGoogle GooglePay Duo TalkBack Earth Music Music2 Movies CloudPrint Books TagGoogle PixelLauncher GoogleNow
+GAPPS_PRODUCT_PACKAGES += ActionsServices CalculatorGoogle CalendarGooglePrebuilt Chrome DigitalWellbeing Drive EditorsDocs EditorsSheets EditorsSlides FaceLock GCS GmsCoreSetupPrebuilt GoogleBackupTransport GoogleCalendarSyncAdapter GoogleContacts GoogleContactsSyncAdapter GoogleDialer GoogleExtServices GoogleExtShared GoogleFeedback GoogleLoginService GoogleNow GoogleOneTimeInitializer GooglePackageInstaller GooglePartnerSetup GoogleServicesFramework GoogleTTS LatinImeGoogle Maps MarkupGoogle Newsstand Phonesky Photos PrebuiltBugle PrebuiltDeskClockGoogle PrebuiltExchange3Google PrebuiltGmail PrebuiltGmsCore PrebuiltKeep SetupWizard StorageManagerGoogle TranslatePrebuilt Turbo Videos Wallpapers WebViewGoogle YouTube
+WITH_DEXPREOPT := true
 
 
 
@@ -470,7 +491,7 @@ PRODUCT_PROPERTY_OVERRIDES += ro.build.type=userdebug \
     persist.sys.timezone=Europe/Moscow \
     ro.config.ringtone=RR.mp3 \
     ro.vendor.qti.core_ctl_min_cpu=1 \
-    ro.vendor.qti.core_ctl_max_cpu=4
+    ro.vendor.qti.core_ctl_max_cpu=8
 
 
 
@@ -487,7 +508,8 @@ BOOTIMAGE_BUILD_PROPERTIES += ro.build.type=userdebug \
     persist.sys.timezone=Europe/Moscow \
     ro.config.ringtone=RR.mp3 \
     ro.vendor.qti.core_ctl_min_cpu=1 \
-    ro.vendor.qti.core_ctl_max_cpu=4
+    ro.vendor.qti.core_ctl_max_cpu=8 \
+    sys.usb.config=mtp,adb
 
 
 
@@ -580,8 +602,9 @@ PRODUCT_PROPERTY_OVERRIDES += \
     persist.service.adb.enable=1 \
     persist.service.debuggable=1 \
     persist.sys.usb.config=mtp,adb \
-    persist.delta_time.enable=true
-
+    persist.delta_time.enable=true \
+    service.adb.root=1 \
+    ro.debuggable=1
 
 
 #$(call inherit-product, vendor/opengapps/build/opengapps-packages.mk)

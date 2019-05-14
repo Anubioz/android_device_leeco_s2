@@ -94,6 +94,7 @@ BOARD_HAVE_BLUETOOTH_QCOM := true
 BLUETOOTH_HCI_USE_MCT := true
 QCOM_BT_USE_BTNV := true
 QCOM_BT_USE_SMD_TTY := true
+TARGET_USE_QTI_BT_STACK := true
 
 # Camera
 USE_DEVICE_SPECIFIC_CAMERA := true
@@ -224,8 +225,6 @@ OVERRIDE_RS_DRIVER := libRSDriver_adreno.so
 # Recovery
 TARGET_RECOVERY_FSTAB := $(DEVICE_PATH)/rootdir/etc/fstab.qcom
 TARGET_USERIMAGES_USE_EXT4 := true
-TARGET_USES_MKE2FS := true
-TARGET_USERIMAGES_USE_F2FS := true
 
 # RIL
 TARGET_RIL_VARIANT := caf
@@ -233,7 +232,7 @@ TARGET_USES_OLD_MNC_FORMAT := true
 TARGET_PROVIDES_QTI_TELEPHONY_JAR := true
 
 # Sepolicy
-include device/qcom/sepolicy/Android.mk
+include device/qcom/sepolicy-legacy/sepolicy.mk
 BOARD_SEPOLICY_DIRS += $(DEVICE_PATH)/sepolicy
 
 # Shims
@@ -243,6 +242,9 @@ TARGET_LD_SHIM_LIBS := \
    /system/lib64/hw/gxfingerprint.default.so|fakelogprint.so \
    /system/lib64/hw/fingerprint.vendor.msm8952.so|fakelogprint.so \
    /system/bin/gx_fpd|fakelogprint.so
+
+# Telephony
+TARGET_USES_ALTERNATIVE_MANUAL_NETWORK_SELECT := true
 
 # Wifi
 BOARD_HAS_QCOM_WLAN			:= true
@@ -255,7 +257,11 @@ BOARD_WPA_SUPPLICANT_PRIVATE_LIB	:= lib_driver_cmd_$(BOARD_WLAN_DEVICE)
 WIFI_DRIVER_FW_PATH_AP			:= "ap"
 WIFI_DRIVER_FW_PATH_STA			:= "sta"
 WPA_SUPPLICANT_VERSION			:= VER_0_8_X
+PRODUCT_VENDOR_MOVE_ENABLED             := true
+TARGET_DISABLE_WCNSS_CONFIG_COPY        := true
 TARGET_USES_WCNSS_MAC_ADDR_REV		:= true
+
+
 
 # OTA Assert
 TARGET_OTA_ASSERT_DEVICE := s2,le_s2,le_s2_ww
@@ -267,6 +273,8 @@ TARGET_ENABLE_MEDIADRM_64 := true
 
 # Disable secure discard because it's SLOW
 BOARD_SUPPRESS_SECURE_ERASE := true
+
+TARGET_FUZZ_ENGINE = honggfuzz
 
 # Qualcomm LLVM Compiler
 SDCLANG := true
