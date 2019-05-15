@@ -455,12 +455,9 @@ PRODUCT_PACKAGES += \
     OmniSwitch \
     AdAway \
     GoogleCameraMod \
-    Snap
-#    TitaniumBackup \
-#    ExKernelManager \
-#    Substratum \
-#    BigBlu \
-#    PitchBlack
+    Snap \
+    TitaniumBackup \
+    ExKernelManager
 
 GAPPS_VARIANT := mini
 GAPPS_FORCE_WEBVIEW_OVERRIDES := true
@@ -607,4 +604,4 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.debuggable=1
 
 
-#$(call inherit-product, vendor/opengapps/build/opengapps-packages.mk)
+$(call inherit-product, vendor/opengapps/build/opengapps-packages.mk)

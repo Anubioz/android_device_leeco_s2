@@ -743,7 +743,7 @@ int QCamera3HardwareInterface::validateStreamDimensions(
     * Check if unsupported sizes have been requested on any of them
     */
     for (size_t j = 0; j < streamList->num_streams; j++) {
-        bool sizeFound = false;
+        bool sizeFound = true;
         camera3_stream_t *newStream = streamList->streams[j];
 
         /*
