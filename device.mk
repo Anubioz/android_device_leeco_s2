@@ -187,6 +187,34 @@ PRODUCT_PACKAGES += \
     liboverlay \
     libqdMetaData.system
 
+# Display
+PRODUCT_PACKAGES += \
+    android.hardware.graphics.allocator@2.0-impl \
+    android.hardware.graphics.allocator@2.0-service \
+    android.hardware.graphics.composer@2.1-impl \
+    android.hardware.graphics.composer@2.1-service \
+    android.hardware.graphics.mapper@2.0-impl \
+    android.hardware.configstore@1.0-service \
+    android.hardware.memtrack@1.0-impl \
+    android.hardware.memtrack@1.0-service \
+    copybit.msm8996 \
+    gralloc.msm8996 \
+    hwcomposer.msm8996 \
+    memtrack.msm8996 \
+    libdisplayconfig \
+    libhwc2on1adapter \
+    libgenlock \
+    liboverlay \
+    libtinyxml \
+    libqdMetaData \
+    libqdMetaData.system
+
+
+PRODUCT_PACKAGES += \
+    vendor.display.config@1.1 \
+    vendor.display.config@1.1_vendor
+
+
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/ad_calib.cfg:system/etc/ad_calib.cfg
 
@@ -229,10 +257,9 @@ PRODUCT_PACKAGES += \
 # HIDL
 PRODUCT_PACKAGES += \
     android.hidl.base@1.0 \
-    android.hidl.base@1.0_system \
     android.hidl.manager@1.0 \
-    android.hidl.manager@1.0_system
 
+CAMERA_DAEMON_NOT_PRESENT := true
 # Input configuration
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/keylayout/ft5x06_ts.kl:$(TARGET_COPY_OUT_VENDOR)/usr/keylayout/ft5x06_ts.kl \
@@ -459,6 +486,17 @@ PRODUCT_PACKAGES += \
     TitaniumBackup \
     ExKernelManager
 
+
+PRODUCT_PACKAGES += \
+    tinyplay \
+    tinycap \
+    tinymix \
+    tinyhostless \
+    tinypcminfo \
+    cplay \
+    rsync \
+    tcpdump
+
 GAPPS_VARIANT := mini
 GAPPS_FORCE_WEBVIEW_OVERRIDES := true
 GAPPS_FORCE_MMS_OVERRIDES := true
@@ -604,4 +642,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.debuggable=1
 
 
-$(call inherit-product, vendor/opengapps/build/opengapps-packages.mk)
+#$(call inherit-product, vendor/opengapps/build/opengapps-packages.mk)
+
+

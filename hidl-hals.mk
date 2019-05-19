@@ -27,7 +27,12 @@ PRODUCT_PACKAGES += \
     android.hardware.audio.effect@4.0 \
     android.hardware.audio.effect@4.0-impl \
     android.hardware.soundtrigger@2.1-impl \
-    android.hardware.soundtrigger@2.1-service
+    android.hardware.soundtrigger@2.1-service \
+    vendor.lineage.livedisplay@2.0 \
+    android.hardware.wifi.offload@1.0 \
+    android.hardware.wifi.offload@1.0-impl
+#    vendor.lineage.livedisplay@2.0-impl
+
 
 # Camera
 PRODUCT_PACKAGES += \
@@ -130,3 +135,37 @@ PRODUCT_PACKAGES += \
 # Wi-Fi
 PRODUCT_PACKAGES += \
     android.hardware.wifi@1.0-service
+
+
+#PRODUCT_PACKAGES += \
+#    android.hardware.graphics.allocator@2.0 \
+#    android.hardware.graphics.mapper@2.0 \
+#    android.hardware.graphics.mapper@2.1 \
+#    android.hardware.graphics.common@1.0 \
+#    android.hardware.graphics.common@1.1 \
+#    android.hardware.renderscript@1.0 \
+#    android.hidl.memory@1.0 \
+#    libRSCpuRef \
+#    libRSDriver \
+#    libRS_internal \
+#    libbacktrace \
+#    libbase \
+#    libbcinfo \
+#    libblas \
+#    libc++ \
+#    libcompiler_rt \
+#    libcutils \
+#    libft2 \
+#    libhardware \
+#    libhidlbase \
+#    libhidlmemory \
+#    libhidltransport \
+#    libhwbinder \
+#    libion \
+#    liblzma \
+#    libpng \
+#    libunwind \
+#    libunwindstack \
+#    libutils \
+#    libutilscallstack \
+#    libdexfile
