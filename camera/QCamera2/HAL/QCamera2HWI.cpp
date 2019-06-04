@@ -1623,7 +1623,7 @@ QCamera2HardwareInterface::QCamera2HardwareInterface(uint32_t cameraId)
     getLogLevel();
     ATRACE_CALL();
     mCameraDevice.common.tag = HARDWARE_DEVICE_TAG;
-    mCameraDevice.common.version = CAMERA_DEVICE_API_VERSION_1_0;
+    mCameraDevice.common.version = HARDWARE_DEVICE_API_VERSION(1, 0);
     mCameraDevice.common.close = close_camera_device;
     mCameraDevice.ops = &mCameraOps;
     mCameraDevice.priv = this;
@@ -3541,8 +3541,6 @@ int QCamera2HardwareInterface::autoFocus()
     cam_focus_mode_type focusMode = mParameters.getFocusMode();
     CDBG_HIGH("[AF_DBG] %s: focusMode=%d, m_currentFocusState=%d",
             __func__, focusMode, m_currentFocusState);
-
-    m_currentFocusState = CAM_AF_STATE_INACTIVE;
 
     switch (focusMode) {
     case CAM_FOCUS_MODE_AUTO:

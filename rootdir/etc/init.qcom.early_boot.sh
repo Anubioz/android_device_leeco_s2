@@ -28,6 +28,8 @@
 
 export PATH=/vendor/bin
 
+setprop sys.leeco.performance_mode 2
+
 boot_reason=`cat /proc/sys/kernel/boot_reason`
 reboot_reason=`getprop ro.boot.alarmboot`
 if [ "$boot_reason" = "3" ] || [ "$reboot_reason" = "true" ]; then

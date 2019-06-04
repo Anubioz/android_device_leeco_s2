@@ -56,6 +56,12 @@ sys.vendor.shutdown.waittime=500
 camera.lowpower.record.enable=1
 camera.hal1.packagelist=com.skype.raider,com.google.android.talk
 persist.camera.HAL3.enabled=1
+persist.camera.ois.disable=0
+persist.camera.eis.enabled=1
+camera.eis.enabled=1
+camera.ois.enable=1
+persist.camera.ois.enable=1
+
 persist.vendor.qti.telephony.vt_cam_interface=1
 
 # Additional buffers shared between Camera and Video
@@ -112,6 +118,11 @@ qcom.hw.aac.encoder=true
 ro.opengles.version=196610
 ro.sf.lcd_density=420
 ro.qualcomm.cabl=0
+debug.cpurend.vsync=false
+vendor.display.disable_skip_validate=1
+vendor.display.enable_default_color_mode=1
+vendor.display.perf_hint_window=50
+vendor.gralloc.enable_fb_ubwc=1
 
 # Media
 av.debug.disable.pers.cache=1
@@ -239,5 +250,31 @@ ro.vendor.qti.core_ctl_min_cpu=1
 ro.vendor.qti.core_ctl_max_cpu=8
 
 persist.sys.timezone=Europe/Moscow
+sys.timezone=Europe/Moscow
 ro.config.ringtone=RR.mp3
+
+
+# GCAM Fixes
+
+persist.camera.HAL3.enabled=1
+camera.HAL3.enabled=1
+persist.camera.eis.enable=1
+camera.eis.enable=1
+persist.camera.is_mode=4
+camera.is_mode=4
+persist.camera.disable_zsl_mode=1
+camera.disable_zsl_mode=1
+persist.camera.gyro.android=4
+camera.gyro.android=4
+persist.camera.tof.direct=1
+camera.tof.direct=1
+persist.camera.tnr.preview=1
+camera.tnr.preview=1
+persist.camera.tnr.video=1
+camera.tnr.video=1
+ro.camera.notify_nfc=1
+camera.notify_nfc=1
+
+
+sys.leeco.performance_mode=0
 

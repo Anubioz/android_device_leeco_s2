@@ -24,7 +24,7 @@ $(call inherit-product, vendor/leeco/s2/s2-vendor.mk)
 # Overlay
 DEVICE_PACKAGE_OVERLAYS += \
     $(LOCAL_PATH)/overlay \
-    vendor/aosp/overlay/CarrierConfig
+    $(LOCAL_PATH)/overlay-lineage
 
 PRODUCT_ENFORCE_RRO_TARGETS := \
     framework-res
@@ -151,6 +151,7 @@ PRODUCT_PACKAGES += \
     libqomx_core \
     libmmcamera_interface \
     libmmjpeg_interface \
+    libgui_vendor \
     libmm-qcamera
 endif
 
@@ -220,7 +221,8 @@ PRODUCT_COPY_FILES += \
 
 # Doze mode
 PRODUCT_PACKAGES += \
-    Doze
+    Doze \
+    LeEcoParts
 
 # Fake logprint for fingerprint libs
 PRODUCT_PACKAGES += \
@@ -257,9 +259,10 @@ PRODUCT_PACKAGES += \
 # HIDL
 PRODUCT_PACKAGES += \
     android.hidl.base@1.0 \
+    android.hidl.base@1.0_system \
     android.hidl.manager@1.0 \
+    android.hidl.manager@1.0_system
 
-CAMERA_DAEMON_NOT_PRESENT := true
 # Input configuration
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/keylayout/ft5x06_ts.kl:$(TARGET_COPY_OUT_VENDOR)/usr/keylayout/ft5x06_ts.kl \
@@ -296,8 +299,7 @@ PRODUCT_COPY_FILES += \
 # LeEco Parts
 PRODUCT_PACKAGES += \
     LeEcoParts \
-    LePref \
-    LeRemote 
+    LePref
 
 # Libshims
 PRODUCT_PACKAGES += \
@@ -481,10 +483,12 @@ PRODUCT_PACKAGES += \
     parted \
     OmniSwitch \
     AdAway \
-    GoogleCameraMod \
-    Snap \
+    rr.leeco.gcam \
     TitaniumBackup \
-    ExKernelManager
+    rr.leeco.exkernel \
+    FiLMiCPro \
+    FDroid \
+    RRLeecoPerf
 
 
 PRODUCT_PACKAGES += \
@@ -497,6 +501,10 @@ PRODUCT_PACKAGES += \
     rsync \
     tcpdump
 
+#PE
+#PRODUCT_PACKAGES += \
+#    org.pixelexperience.ambient.play.history.provider
+
 GAPPS_VARIANT := mini
 GAPPS_FORCE_WEBVIEW_OVERRIDES := true
 GAPPS_FORCE_MMS_OVERRIDES := true
@@ -508,7 +516,7 @@ GAPPS_FORCE_PIXEL_LAUNCHER := false
 GAPPS_FORCE_MATCHING_DPI := true
 GAPPS_LOCAL_OVERRIDES_PACKAGES += LatinIME messaging MMS PicoTTS ContactsGoogle
 GAPPS_BYPASS_PACKAGE_OVERRIDES := Dialer
-GAPPS_EXCLUDED_PACKAGES += Hangouts PlusOne PixelLauncher GoogleHome Velvet NexusLauncher PrintServiceGoogle GooglePay Duo TalkBack Earth Music Music2 Movies CloudPrint Books TagGoogle PixelLauncher GoogleNow
+GAPPS_EXCLUDED_PACKAGES += Hangouts GoogleCamera PlusOne PixelLauncher GoogleHome Velvet NexusLauncher PrintServiceGoogle GooglePay Duo TalkBack Earth Music Music2 Movies CloudPrint Books TagGoogle PixelLauncher GoogleNow
 GAPPS_PRODUCT_PACKAGES += ActionsServices CalculatorGoogle CalendarGooglePrebuilt Chrome DigitalWellbeing Drive EditorsDocs EditorsSheets EditorsSlides FaceLock GCS GmsCoreSetupPrebuilt GoogleBackupTransport GoogleCalendarSyncAdapter GoogleContacts GoogleContactsSyncAdapter GoogleDialer GoogleExtServices GoogleExtShared GoogleFeedback GoogleLoginService GoogleNow GoogleOneTimeInitializer GooglePackageInstaller GooglePartnerSetup GoogleServicesFramework GoogleTTS LatinImeGoogle Maps MarkupGoogle Newsstand Phonesky Photos PrebuiltBugle PrebuiltDeskClockGoogle PrebuiltExchange3Google PrebuiltGmail PrebuiltGmsCore PrebuiltKeep SetupWizard StorageManagerGoogle TranslatePrebuilt Turbo Videos Wallpapers WebViewGoogle YouTube
 WITH_DEXPREOPT := true
 
@@ -564,7 +572,9 @@ PRODUCT_COPY_FILES += \
 # Twrp
 #RECOVERY_VARIANT := twrp
 ifeq ($(RECOVERY_VARIANT),twrp)
-TARGET_RECOVERY_FSTAB := $(LOCAL_PATH)/twrp/fstab.qcom
+WITH_SU := true
+TARGET_RECOVERY_FSTAB := device/leeco/s2/twrp/fstab.qcom
+TARGET_SYSTEM_PROP := device/leeco/s2/twrp/root/default.prop
 TARGET_RECOVERY_DEVICE_DIRS += device/leeco/s2/twrp
 BOARD_HAS_NO_REAL_SDCARD := true
 TARGET_USE_CUSTOM_LUN_FILE_PATH := /sys/devices/platform/msm_hsusb/gadget/lun0/file
@@ -580,16 +590,17 @@ TW_INCLUDE_NTFS_3G := true
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
     persist.sys.usb.config=mtp,adb \
     ro.product.locale=ru-RU \
-    persist.sys.timezone=Europe/Moscow \
-    ro.secure=0 \
-    ro.debug.secure=0 \
-    ro.adb.secure=0 \
-    ro.debuggable=1
+    persist.sys.timezone=Europe/Moscow
+#    ro.secure=0 
+#    ro.debug.secure=0 \
+#    ro.adb.secure=0 \
+#    ro.debuggable=1
 
 
-TW_INCLUDE_CRYPTO := false
+TW_INCLUDE_CRYPTO := true
 TW_THEME := portrait_hdpi
 TW_USE_TOOLBOX := false
+TW_USE_TOYBOX := true
 TW_EXCLUDE_SUPERSU := false
 TARGET_USERIMAGES_USE_EXT4 := true
 TARGET_USERIMAGES_USE_F2FS := true
@@ -599,9 +610,8 @@ TW_NO_REBOOT_BOOTLOADER := false
 TW_NO_REBOOT_RECOVERY := false
 TW_NO_BATT_PERCENT := false
 TW_NO_CPU_TEMP := false
-TW_INCLUDE_FBE := false
-TW_INCLUDE_FBE_METADATA_DECRYPT := false
-
+TW_INCLUDE_FBE := true
+TW_INCLUDE_FBE_METADATA_DECRYPT := true
 TW_NEVER_UNMOUNT_SYSTEM := false
 TW_NO_USB_STORAGE := false
 TW_INCLUDE_INJECTTWRP := false
@@ -613,14 +623,24 @@ TW_DEFAULT_LANGUAGE := ru
 TW_NO_EXFAT := false
 TW_EXCLUDE_ENCRYPTED_BACKUPS := false
 TW_EXCLUDE_DEFAULT_USB_INIT := false
-TW_INCLUDE_NTFS_3G := false
+TW_INCLUDE_NTFS_3G := true
 TW_OEM_BUILD := false
 TW_INCLUDE_FB2PNG := true
 TWRP_INCLUDE_LOGCAT := true
-TARGET_RECOVERY_DEVICE_MODULES := libf2fs libf2fs_sparseblock libncurses libnl libssh libsysutils unrar 7z bash crypto fsck_msdos htop  logd logwrapper mkfs.f2fs mount.exfat nano tzdatacheck uncrypt gptfdisk libnl ntfs-3g p7zip squashfs-tools ext4_utils f2fs_utils libcutils libsparse logcat logd logwrapper squashfs_utils
-#TWRP_EVENT_LOGGING := true
+TW_NO_USB_STORAGE := false
+TARGET_RECOVERY_DEVICE_MODULES := twrp.fstab init.recovery.qcom.rc init.target.rc init.qcom.sh ueventd.qcom.rc ueventd.rc init.qcom.early_boot.sh init.qcom.post_boot.sh init.safailnet.rc prop.default ueventd.qcom.rc init.recovery.usb.rc init.recovery.service.rc init.recovery.hlthchrg.rc init.recovery.logd.rc init.recovery.mksh.rc adbd adb fsck.fat fatlabel mkfs.fat libtwadbbu twrpbu libedify edify_parser libfusetwrp libflashutils libgpt_twrp libutil-linux libuuid libblkid libcrecovery libmincrypttwrp libtar_static libminadbd libminzip libmmcutils libmtdutils libtwrpmtp-ffs openaes orscmd libotafault libotautil pigz simg2img_twrp libf2fs libf2fs_sparseblock libncurses libnl libssh libsysutils unrar 7z bash crypto fsck_msdos htop  logd logwrapper mkfs.f2fs mount.exfat nano tzdatacheck uncrypt gptfdisk libnl ntfs-3g p7zip squashfs-tools ext4_utils f2fs_utils libcutils libsparse logcat logd logwrapper squashfs_utils mount.f2fs bash awk
+TWRP_EVENT_LOGGING := false
+TARGET_USERIMAGES_USE_EXT4 := true
+TARGET_USES_MKE2FS := true
+TARGET_USERIMAGES_USE_F2FS := true
+TW_INCLUDE_REPACKTOOLS := true
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/trwp/root/fstab.com:etc/twrp.fstab \
+    $(LOCAL_PATH)/twrp/root/default.prop:prop.default 
+
 else
-TARGET_RECOVERY_FSTAB := $(DEVICE_PATH)/rootdir/etc/fstab.qcom
+TARGET_RECOVERY_FSTAB := device/leeco/s2/rootdir/etc/fstab.qcom
+TARGET_SYSTEM_PROP := device/leeco/s2/system.prop
 TARGET_USERIMAGES_USE_EXT4 := true
 TARGET_USES_MKE2FS := true
 TARGET_USERIMAGES_USE_F2FS := true
@@ -629,6 +649,8 @@ endif
 
 # Recovery
 TARGET_USERIMAGES_USE_EXT4 := true
+TARGET_SYSTEMIMAGES_USE_F2FS := true
+TARGET_SYSTEMIMAGE_USE_F2FS := true
 TARGET_USERIMAGES_USE_F2FS := true
 DISABLE_DEXPREOPT := false
 WITH_DEXPREOPT := true
@@ -638,7 +660,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
     persist.service.debuggable=1 \
     persist.sys.usb.config=mtp,adb \
     persist.delta_time.enable=true \
-    service.adb.root=1 \
     ro.debuggable=1
 
 
