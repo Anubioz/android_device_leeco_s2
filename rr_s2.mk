@@ -20,7 +20,7 @@ TARGET_BOOT_ANIMATION_RES := 1080
 # Inherit device configuration
 $(call inherit-product, device/leeco/s2/full_s2.mk)
 
-# Inherit some common LineageOS stuff.
+# Inherit some common ResurrectionRemix stuff.
 $(call inherit-product, vendor/rr/config/common_full_phone.mk)
 
 ## Device identifier. This must come after all inclusions

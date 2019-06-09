@@ -210,5 +210,5 @@ real_path=${misc_link##*>}
 setprop persist.vendor.mmi.misc_dev_path $real_path
 
 # Set BFQ as default io-schedular after boot
-setprop sys.io.scheduler "zen"
-setprop sys.leeco.performance_mode 0
+setprop sys.io.scheduler "cfq"
+setprop sys.leeco.performance_mode 1

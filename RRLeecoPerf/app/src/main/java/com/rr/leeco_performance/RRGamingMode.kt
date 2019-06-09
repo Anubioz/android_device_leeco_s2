@@ -1,68 +1,117 @@
 package com.rr.leeco_performance
 
-import android.content.Context
-import android.content.Intent
-import android.os.VibrationEffect
-import android.os.Vibrator
-import android.os.AsyncTask
 import android.service.quicksettings.Tile
 import android.service.quicksettings.TileService
-import kotlinx.coroutines.experimental.delay
+
+
 import android.graphics.drawable.Icon
-import kotlinx.coroutines.experimental.launch
-import android.R
-import android.R.drawable
+
 
 import com.rr.leeco_performance.R.drawable.ic_videogame_asset_black_24dp
 import com.rr.leeco_performance.R.drawable.ic_battery_alert_black_24dp
 import com.rr.leeco_performance.R.drawable.ic_battery_std_black_24dp
 
-
-import kotlin.concurrent.thread
-import android.R.id.edit
-import android.content.SharedPreferences
-
-
+val PREFS_FILENAME = "com.rr.leeco_performance.prefs"
 
 class RRGamingMode: TileService() {
+
+
     override fun onTileAdded() {
         super.onTileAdded()
 
-        if(getServiceStatus()==2) {
-            // Turn on
-            qsTile.state = Tile.STATE_ACTIVE
-            qsTile.label = "Leeco Gaming Mode Active"
-            qsTile.icon = Icon.createWithResource(getApplicationContext(),
-                    ic_videogame_asset_black_24dp)
+        val prefs = this.getSharedPreferences(PREFS_FILENAME, 0)
 
+        val currentMode = prefs.getInt("RRLeecoCurrentMode", 1);
 
-        } else {
-
-            if(getServiceStatus()==0) {
+        val result = Shell.SH.run("setprop sys.leeco.performance_mode " + currentMode)
+        if (result.isSuccessful) {
+            if (currentMode == 2) {
                 // Turn on
                 qsTile.state = Tile.STATE_ACTIVE
-                qsTile.label = "Leeco Powersave Mode Active"
+                qsTile.label = "Leeco GamingMode"
                 qsTile.icon = Icon.createWithResource(getApplicationContext(),
-                        ic_battery_alert_black_24dp)
-
+                        ic_videogame_asset_black_24dp)
 
 
             } else {
 
-                // Turn off
-                qsTile.state = Tile.STATE_INACTIVE
-                qsTile.label = "Switch Leeco Performance Mode"
-                qsTile.icon = Icon.createWithResource(getApplicationContext(),
-                        ic_battery_std_black_24dp)
+                if (currentMode == 0) {
+                    // Turn on
+                    qsTile.state = Tile.STATE_ACTIVE
+                    qsTile.label = "Leeco PowerSave"
+                    qsTile.icon = Icon.createWithResource(getApplicationContext(),
+                            ic_battery_alert_black_24dp)
 
+
+                } else {
+
+                    // Turn off
+                    qsTile.state = Tile.STATE_INACTIVE
+                    qsTile.label = "Leeco Normal"
+                    qsTile.icon = Icon.createWithResource(getApplicationContext(),
+                            ic_battery_std_black_24dp)
+
+                }
             }
+            qsTile.updateTile()
         }
-        qsTile.updateTile()
+    }
+
+
+    override fun onStartListening() {
+        super.onStartListening()
+
+        val prefs = this.getSharedPreferences(PREFS_FILENAME, 0)
+
+        val currentMode = prefs.getInt("RRLeecoCurrentMode", 1);
+
+        val result = Shell.SH.run("setprop sys.leeco.performance_mode " + currentMode)
+
+        if (result.isSuccessful) {
+            if (currentMode == 2) {
+                // Turn on
+                qsTile.state = Tile.STATE_ACTIVE
+                qsTile.label = "Leeco GamingMode"
+                qsTile.icon = Icon.createWithResource(getApplicationContext(),
+                        ic_videogame_asset_black_24dp)
+
+
+            } else {
+
+                if (currentMode == 0) {
+                    // Turn on
+                    qsTile.state = Tile.STATE_ACTIVE
+                    qsTile.label  = "Leeco PowerSave"
+                    qsTile.icon = Icon.createWithResource(getApplicationContext(),
+                            ic_battery_alert_black_24dp)
+
+
+                } else {
+
+                    // Turn off
+                    qsTile.state = Tile.STATE_INACTIVE
+                    qsTile.label = "Leeco Normal"
+                    qsTile.icon = Icon.createWithResource(getApplicationContext(),
+                            ic_battery_std_black_24dp)
+
+
+                }
+            }
+
+            qsTile.updateTile()
+
+        }
 
     }
 
     override fun onClick() {
         super.onClick()
+
+        val prefs = this.getSharedPreferences(PREFS_FILENAME, 0)
+
+
+        val editor = prefs.edit()
+
 
         if(qsTile.state == Tile.STATE_INACTIVE) {
             // Turn on
@@ -70,36 +119,15 @@ class RRGamingMode: TileService() {
             val result = Shell.SH.run("setprop sys.leeco.performance_mode 2")
             if (result.isSuccessful) {
 
-
-                if(getServiceStatus()==2) {
+                editor.putInt("RRLeecoCurrentMode",2)
+                editor.apply()
                     // Turn on
                     qsTile.state = Tile.STATE_ACTIVE
-                    qsTile.label = "Leeco Gaming Mode Active"
+                    qsTile.label = "Leeco GamingMode"
                     qsTile.icon = Icon.createWithResource(getApplicationContext(),
                             ic_videogame_asset_black_24dp)
 
 
-                } else {
-
-                    if(getServiceStatus()==0) {
-                        // Turn on
-                        qsTile.state = Tile.STATE_ACTIVE
-                        qsTile.label = "Leeco Powersave Mode Active"
-                        qsTile.icon = Icon.createWithResource(getApplicationContext(),
-                                ic_battery_alert_black_24dp)
-
-
-
-                    } else {
-
-                        // Turn off
-                        qsTile.state = Tile.STATE_INACTIVE
-                        qsTile.label = "Switch Leeco Performance Mode"
-                        qsTile.icon = Icon.createWithResource(getApplicationContext(),
-                                ic_battery_std_black_24dp)
-
-                    }
-                }
 
             }
 
@@ -108,20 +136,22 @@ class RRGamingMode: TileService() {
             if(getServiceStatus()==2) {
                 // Turn on
                 Shell.SH.run("setprop sys.leeco.performance_mode 0")
-
+                editor.putInt("RRLeecoCurrentMode",0)
+                editor.apply()
 
             }
             else
             {
                 Shell.SH.run("setprop sys.leeco.performance_mode 1")
-
+                editor.putInt("RRLeecoCurrentMode",1)
+                editor.apply()
             }
 
 
             if(getServiceStatus()==2) {
                 // Turn on
                 qsTile.state = Tile.STATE_ACTIVE
-                qsTile.label = "Leeco Gaming Mode Active"
+                qsTile.label = "Leeco GamingMode"
                 qsTile.icon = Icon.createWithResource(getApplicationContext(),
                         ic_videogame_asset_black_24dp)
 
@@ -131,7 +161,7 @@ class RRGamingMode: TileService() {
                 if(getServiceStatus()==0) {
                     // Turn on
                     qsTile.state = Tile.STATE_ACTIVE
-                    qsTile.label = "Leeco Powersave Mode Active"
+                    qsTile.label  = "Leeco PowerSave"
                     qsTile.icon = Icon.createWithResource(getApplicationContext(),
                             ic_battery_alert_black_24dp)
 
@@ -141,7 +171,7 @@ class RRGamingMode: TileService() {
 
                     // Turn off
                     qsTile.state = Tile.STATE_INACTIVE
-                    qsTile.label = "Switch Leeco Performance Mode"
+                    qsTile.label = "Leeco Normal"
                     qsTile.icon = Icon.createWithResource(getApplicationContext(),
                             ic_battery_std_black_24dp)
 
