@@ -1,0 +1,10 @@
+prefix=/system
+exec_prefix=${prefix}
+libdir=/system/lib64
+includedir=${prefix}/include
+vendor=MIT
+
+Name: krb5-gssapi
+Description: Kerberos implementation of the GSSAPI
+Version: 1.16.3
+Requires: mit-krb5-gssapi

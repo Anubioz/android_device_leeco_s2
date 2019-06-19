@@ -28,9 +28,9 @@ PRODUCT_PACKAGES += \
     android.hardware.audio.effect@4.0-impl \
     android.hardware.soundtrigger@2.1-impl \
     android.hardware.soundtrigger@2.1-service \
-    vendor.lineage.livedisplay@2.0
-#    android.hardware.wifi.offload@1.0 \
-#    android.hardware.wifi.offload@1.0-impl
+    vendor.lineage.livedisplay@2.0 \
+    android.hardware.wifi.offload@1.0 \
+    android.hardware.wifi.offload@1.0-impl
 #    vendor.lineage.livedisplay@2.0-impl
 
 

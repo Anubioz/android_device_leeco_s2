@@ -320,6 +320,7 @@ on property:persist.sys.usb.gps.notify=1
 on property:persist.sys.usb.gps.notify=2
     write /sys/class/type-c/info/vbus_status 0
 
+
 on property:sys.leeco.performance_mode=0
 
     write /sys/devices/system/cpu/cpu4/core_ctl/min_cpus 0
@@ -339,15 +340,29 @@ on property:sys.leeco.performance_mode=0
 
     write /sys/module/msm_thermal/vdd_restriction/enabled 0
     write /sys/module/msm_thermal/parameters/enabled Y
-    write /sys/module/adreno_idler/parameters/adreno_idler_active Y
-    write /sys/module/simple_gpu_algorithm/parameters/simple_gpu_activate 1
+
     write /sys/module/msm_thermal/core_control/enabled 1
 
-    write /sys/class/kgsl/kgsl-3d0/devfreq/min_freq 266666667
-    write /sys/class/kgsl/kgsl-3d0/devfreq/max_freq 432000000
+    write /sys/class/kgsl/kgsl-3d0/devfreq/min_freq 19200000
+    write /sys/class/kgsl/kgsl-3d0/gpuclk 133333333
+    write /sys/class/kgsl/kgsl-3d0/devfreq/max_freq 366670000
+    write /sys/class/kgsl/kgsl-3d0/min_gpuclk 19200000
+    write /sys/class/kgsl/kgsl-3d0/max_gpuclk 366670000
+
+    write /sys/class/kgsl/kgsl-3d0/default_pwrlevel 5
+    write /sys/class/kgsl/kgsl-3d0/min_pwrlevel 6
+    write /sys/class/kgsl/kgsl-3d0/max_pwrlevel 3
+    write /sys/class/kgsl/kgsl-3d0/thermal_pwrlevel 5
     write /sys/class/kgsl/kgsl-3d0/devfreq/adrenoboost 0
     write /sys/class/kgsl/kgsl-3d0/devfreq/governor msm-adreno-tz
-
+    write /sys/module/adreno_idler/parameters/adreno_idler_active Y
+    write /sys/module/adreno_idler/parameters/adreno_idler_downdifferential 75
+    write /sys/module/adreno_idler/parameters/adreno_idler_idlewait 10
+    write /sys/module/adreno_idler/parameters/adreno_idler_idleworkload 1000
+    write /sys/module/simple_gpu_algorithm/parameters/simple_gpu_activate 1
+    write /sys/module/simple_gpu_algorithm/parameters/simple_laziness 10
+    write /sys/module/simple_gpu_algorithm/parameters/simple_ramp_threshold 0
+    
     write /dev/cpuset/background/cpus 0
     write /dev/cpuset/foreground/cpus 0-4
     write /dev/cpuset/top-app/cpus 0-5
@@ -357,27 +372,24 @@ on property:sys.leeco.performance_mode=0
     write /sys/block/mmcblk0/queue/scheduler cfq
     write /sys/block/mmcblk0/queue/read_ahead_kb 128
     write /sys/module/lowmemorykiller/parameters/enable_adaptive_lmk 1
-    write /proc/sys/kernel/random/read_wakeup_threshold 1024
-    write /proc/sys/kernel/random/write_wakeup_threshold 1024
+    write /proc/sys/kernel/random/read_wakeup_threshold 64
+    write /proc/sys/kernel/random/write_wakeup_threshold 64
     write /sys/block/mmcblk0/bdi/read_ahead_kb 128
     write /sys/block/mmcblk0/queue/read_ahead_kb 128
     write /sys/block/mmcblk0rpmb/bdi/read_ahead_kb 128
     write /sys/block/mmcblk0rpmb/queue/read_ahead_kb 128
 
     write /sys/kernel/dyn_fsync/Dyn_fsync_active 1
-    write /sys/module/cpu_boost/parameters/input_boost_ms 30
-    write /sys/module/simple_gpu_algorithm/parameters/simple_laziness 10
-    write /sys/module/simple_gpu_algorithm/parameters/simple_ramp_threshold 1000
-    write /sys/module/adreno_idler/parameters/adreno_idler_idleworkload 10000
+    write /sys/module/cpu_boost/parameters/input_boost_ms 0
 
     write /sys/module/cpu_boost/parameters/input_boost_freq "0:0 1:0 2:0 3:0 4:0 5:0 6:0 7:0"
     write /sys/module/cpu_boost/parameters/boost_ms 0
     write /sys/module/cpu_boost/parameters/input_boost_ms 0
     write /sys/module/msm_performance/parameters/touchboost 0
-    write /sys/devices/system/cpu/cpu0/cpufreq/UV_mV_table "700 700 750 860 930 965 980 985 730 730 820 860 935 965 980"
 
     write /sys/module/msm_performance/parameters/cpu_min_freq "0:400000 1:400000 2:400000 3:400000 4:400000 5:400000 6:400000 7:400000"
     write /sys/module/msm_performance/parameters/cpu_max_freq "0:1190400 1:1190400 2:1190400 3:1190400 4:1113600 5:1113600 6:1113600 7:1113600"
+    write /sys/class/misc/boeffla_wakelock_blocker/wakelock_blocker "hwrng,qcom_rx_wakelock;wlan;wlan_wow_wl;wlan_extscan_wl;netmgr_wl;NETLINK;[timerfd]"
 
     write /sys/devices/system/cpu/cpufreq/smartmax_eps/awake_ideal_freq 691200
     write /sys/devices/system/cpu/cpufreq/smartmax_eps/suspend_ideal_freq 400000
@@ -391,6 +403,7 @@ on property:sys.leeco.performance_mode=1
     write /sys/devices/system/cpu/cpu4/core_ctl/max_cpus 4
     write /sys/devices/system/cpu/cpu0/core_ctl/min_cpus 1
     write /sys/devices/system/cpu/cpu0/core_ctl/max_cpus 4
+    write /sys/devices/system/cpu/cpu2/online 1
     write /sys/devices/system/cpu/cpu6/online 1
     write /sys/devices/system/cpu/cpu7/online 1
 
@@ -404,15 +417,28 @@ on property:sys.leeco.performance_mode=1
 
     write /sys/module/msm_thermal/vdd_restriction/enabled 0
     write /sys/module/msm_thermal/parameters/enabled Y
-    write /sys/module/adreno_idler/parameters/adreno_idler_active Y
-    write /sys/module/simple_gpu_algorithm/parameters/simple_gpu_activate 1
     write /sys/module/msm_thermal/core_control/enabled 1
 
-    write /sys/class/kgsl/kgsl-3d0/devfreq/min_freq 266666667
-    write /sys/class/kgsl/kgsl-3d0/devfreq/max_freq 550000000
+    write /sys/class/kgsl/kgsl-3d0/devfreq/min_freq 133333333
+    write /sys/class/kgsl/kgsl-3d0/gpuclk 266666667
+    write /sys/class/kgsl/kgsl-3d0/devfreq/max_freq 432000000
+    write /sys/class/kgsl/kgsl-3d0/min_gpuclk 133333333
+    write /sys/class/kgsl/kgsl-3d0/max_gpuclk 432000000
+    write /sys/class/kgsl/kgsl-3d0/min_pwrlevel 6
+    write /sys/class/kgsl/kgsl-3d0/max_pwrlevel 2
+    write /sys/class/kgsl/kgsl-3d0/thermal_pwrlevel 4
+    write /sys/class/kgsl/kgsl-3d0/default_pwrlevel 4
     write /sys/class/kgsl/kgsl-3d0/devfreq/adrenoboost 1
     write /sys/class/kgsl/kgsl-3d0/devfreq/governor msm-adreno-tz
-
+    write /sys/module/adreno_idler/parameters/adreno_idler_active Y
+    write /sys/module/adreno_idler/parameters/adreno_idler_downdifferential 25
+    write /sys/module/adreno_idler/parameters/adreno_idler_idlewait 45
+    write /sys/module/adreno_idler/parameters/adreno_idler_idleworkload 5000
+    write /sys/module/simple_gpu_algorithm/parameters/simple_gpu_activate 1
+    write /sys/module/simple_gpu_algorithm/parameters/simple_laziness 4
+    write /sys/module/simple_gpu_algorithm/parameters/simple_ramp_threshold 5000
+    
+    
     write /dev/cpuset/background/cpus 0-2
     write /dev/cpuset/foreground/cpus 0-2,4-5
     write /dev/cpuset/top-app/cpus 0-7
@@ -420,29 +446,26 @@ on property:sys.leeco.performance_mode=1
     write /proc/sys/vm/swappiness 60
 
     write /sys/block/mmcblk0/queue/scheduler cfq
-    write /sys/block/mmcblk0/queue/read_ahead_kb 512
+    write /sys/block/mmcblk0/queue/read_ahead_kb 1024
     write /sys/module/lowmemorykiller/parameters/enable_adaptive_lmk 1
-    write /proc/sys/kernel/random/read_wakeup_threshold 1024
-    write /proc/sys/kernel/random/write_wakeup_threshold 1024
+    write /proc/sys/kernel/random/read_wakeup_threshold 64
+    write /proc/sys/kernel/random/write_wakeup_threshold 64
     write /sys/block/mmcblk0/bdi/read_ahead_kb 512
     write /sys/block/mmcblk0/queue/read_ahead_kb 512
     write /sys/block/mmcblk0rpmb/bdi/read_ahead_kb 512
     write /sys/block/mmcblk0rpmb/queue/read_ahead_kb 512
 
     write /sys/kernel/dyn_fsync/Dyn_fsync_active 1
-    write /sys/module/cpu_boost/parameters/input_boost_ms 30
-    write /sys/module/simple_gpu_algorithm/parameters/simple_laziness 4
-    write /sys/module/simple_gpu_algorithm/parameters/simple_ramp_threshold 5000
-    write /sys/module/adreno_idler/parameters/adreno_idler_idleworkload 5000
 
     write /sys/module/cpu_boost/parameters/input_boost_freq "0:0 1:0 2:0 3:0 4:0 5:0 6:0 7:0"
     write /sys/module/cpu_boost/parameters/boost_ms 0
     write /sys/module/cpu_boost/parameters/input_boost_ms 0
     write /sys/module/msm_performance/parameters/touchboost 0
-    write /sys/devices/system/cpu/cpu0/cpufreq/UV_mV_table "700 700 750 860 930 965 980 985 730 730 820 860 935 965 980"
 
     write /sys/module/msm_performance/parameters/cpu_min_freq "0:400000 1:400000 2:400000 3:400000 4:400000 5:400000 6:400000 7:400000"
     write /sys/module/msm_performance/parameters/cpu_max_freq "0:1824000 1:1824000 2:1824000 3:1824000 4:1401600 5:1401600 6:1401600 7:1401600"
+    write /sys/class/misc/boeffla_wakelock_blocker/wakelock_blocker "hwrng,qcom_rx_wakelock;wlan;wlan_wow_wl;wlan_extscan_wl;netmgr_wl;NETLINK;[timerfd]"
+
 
     write /sys/devices/system/cpu/cpu0/cpufreq/interactive/go_hispeed_load 99
     write /sys/devices/system/cpu/cpu0/cpufreq/interactive/above_hispeed_delay 0
@@ -474,31 +497,49 @@ on property:sys.leeco.performance_mode=1
 
 on property:sys.leeco.performance_mode=2
 
-    write /sys/devices/system/cpu/cpu4/core_ctl/min_cpus 1
+    write /sys/devices/system/cpu/cpu4/core_ctl/min_cpus 2
     write /sys/devices/system/cpu/cpu4/core_ctl/max_cpus 4
-    write /sys/devices/system/cpu/cpu0/core_ctl/min_cpus 1
+    write /sys/devices/system/cpu/cpu0/core_ctl/min_cpus 2
     write /sys/devices/system/cpu/cpu0/core_ctl/max_cpus 4
+    write /sys/devices/system/cpu/cpu2/online 1
     write /sys/devices/system/cpu/cpu6/online 1
     write /sys/devices/system/cpu/cpu7/online 1
 
-    write /sys/devices/system/cpu/cpu4/cpufreq/scaling_governor blu_active
-    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor blu_active
+    write /sys/devices/system/cpu/cpu4/cpufreq/scaling_governor performance
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor performance
 
-    write /sys/devices/system/cpu/cpu4/cpufreq/scaling_min_freq 883200
+    write /sys/devices/system/cpu/cpu4/cpufreq/scaling_min_freq 1804800
     write /sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq 1804800
     write /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 1401600
-    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 691200
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 1401600
 
-    write /sys/module/msm_thermal/vdd_restriction/enabled 0
+    write /sys/module/msm_thermal/vdd_restriction/enabled 1
     write /sys/module/msm_thermal/parameters/enabled N
-    write /sys/module/adreno_idler/parameters/adreno_idler_active N
-    write /sys/module/simple_gpu_algorithm/parameters/simple_gpu_activate 1
+    write /sys/module/adreno_idler/parameters/adreno_idler_active Y
+    write /sys/module/simple_gpu_algorithm/parameters/simple_gpu_activate 0
     write /sys/module/msm_thermal/core_control/enabled 1
 
-    write /sys/class/kgsl/kgsl-3d0/devfreq/min_freq 266666667
-    write /sys/class/kgsl/kgsl-3d0/devfreq/max_freq 600000000
-    write /sys/class/kgsl/kgsl-3d0/devfreq/adrenoboost 1
+    write /sys/class/kgsl/kgsl-3d0/idle_timer 80
+
+
+    write /sys/class/kgsl/kgsl-3d0/devfreq/max_freq 621330000
+    write /sys/class/kgsl/kgsl-3d0/devfreq/min_freq 480000000
+    write /sys/class/kgsl/kgsl-3d0/min_pwrlevel 3
+    write /sys/class/kgsl/kgsl-3d0/max_pwrlevel 0
+    write /sys/class/kgsl/kgsl-3d0/thermal_pwrlevel 1
+    write /sys/class/kgsl/kgsl-3d0/default_pwrlevel 1
+    write /sys/class/kgsl/kgsl-3d0/devfreq/adrenoboost 3
     write /sys/class/kgsl/kgsl-3d0/devfreq/governor msm-adreno-tz
+    write /sys/module/adreno_idler/parameters/adreno_idler_downdifferential 25
+    write /sys/module/adreno_idler/parameters/adreno_idler_idlewait 45
+    write /sys/module/adreno_idler/parameters/adreno_idler_idleworkload 1000
+    write /sys/module/simple_gpu_algorithm/parameters/simple_laziness 0
+    write /sys/module/simple_gpu_algorithm/parameters/simple_ramp_threshold 10000
+
+    write /sys/class/kgsl/kgsl-3d0/gpuclk 480000000
+    write /sys/class/kgsl/kgsl-3d0/min_gpuclk 480000000
+    write /sys/class/kgsl/kgsl-3d0/max_gpuclk 621330000
+
 
     write /dev/cpuset/background/cpus 0-1
     write /dev/cpuset/foreground/cpus 0-7
@@ -506,31 +547,27 @@ on property:sys.leeco.performance_mode=2
     write /sys/module/sync/parameters/fsync_enabled N
     write /proc/sys/vm/swappiness 0
 
-    write /sys/block/mmcblk0/queue/scheduler zen
-    write /sys/block/mmcblk0/queue/read_ahead_kb 1024
+    write /sys/block/mmcblk0/queue/scheduler deadline
+    write /sys/block/mmcblk0/queue/read_ahead_kb 2048
     write /sys/module/lowmemorykiller/parameters/enable_adaptive_lmk 1
-    write /proc/sys/kernel/random/read_wakeup_threshold 1024
-    write /proc/sys/kernel/random/write_wakeup_threshold 1024
+    write /sys/module/lowmemorykiller/parameters/minfree "21810,29080,36350,79970,109050,116320"
+    write /proc/sys/kernel/random/read_wakeup_threshold 64
+    write /proc/sys/kernel/random/write_wakeup_threshold 64
     write /sys/block/mmcblk0/bdi/read_ahead_kb 1024
-    write /sys/block/mmcblk0/queue/read_ahead_kb 1024
+    write /sys/block/mmcblk0/queue/read_ahead_kb 2048
     write /sys/block/mmcblk0rpmb/bdi/read_ahead_kb 1024
     write /sys/block/mmcblk0rpmb/queue/read_ahead_kb 1024
 
     write /sys/kernel/dyn_fsync/Dyn_fsync_active 0
-    write /sys/module/cpu_boost/parameters/input_boost_ms 30
-    write /sys/module/simple_gpu_algorithm/parameters/simple_laziness 2
-    write /sys/module/simple_gpu_algorithm/parameters/simple_ramp_threshold 10000
-    write /sys/module/adreno_idler/parameters/adreno_idler_idleworkload 1000
+    write /sys/module/cpu_boost/parameters/input_boost_ms 0
+
 
     write /sys/module/cpu_boost/parameters/input_boost_freq "0:0 1:0 2:0 3:0 4:0 5:0 6:0 7:0"
     write /sys/module/cpu_boost/parameters/boost_ms 0
     write /sys/module/cpu_boost/parameters/input_boost_ms 0
     write /sys/module/msm_performance/parameters/touchboost 0
-    write /sys/devices/system/cpu/cpu0/cpufreq/UV_mV_table "700 700 750 860 930 965 980 985 730 730 820 860 935 965 980"
 
-    write /sys/module/msm_performance/parameters/cpu_min_freq "0:691200 1:691200 2:691200 3:691200 4:883200 5:883200 6:883200 7:883200"
+    write /sys/module/msm_performance/parameters/cpu_min_freq "0:1017600 1:1017600 2:1017600 3:1017600 4:1113600 5:1113600 6:1113600 7:1113600"
     write /sys/module/msm_performance/parameters/cpu_max_freq "0:1401600 1:1401600 2:1401600 3:1401600 4:1804800 5:1804800 6:1804800 7:1804800"
-
-    write /sys/devices/system/cpu/cpu4/cpufreq/blu_active/target_loads "74 883200:73 940800:80 1248000:61 1382400:69 1612800:69 1747200:67 1824000:99"
-    write /sys/devices/system/cpu/cpu0/cpufreq/blu_active/target_loads "80 400000:68 691200:72 806400:83 1017600:99 1382400:75 1401600:99"
-
+    write /sys/class/misc/boeffla_wakelock_blocker/wakelock_blocker "hwrng,qcom_rx_wakelock;wlan;wlan_wow_wl;wlan_extscan_wl;netmgr_wl;NETLINK;[timerfd]"
+    

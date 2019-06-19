@@ -1,0 +1,36 @@
+#!/bin/sh
+
+prefix="/system"
+exec_prefix="${prefix}"
+VERSION="1.7.0"
+CFLAGS="-Wunused-function -Wstrict-prototypes -Wwrite-strings -W -Wall  -Oz"
+CPPFLAGS="-I/system/include  -I/system/include "
+LDFLAGS="-L/system/lib64 -Wl,-rpath=/system/lib64 -Wl,--enable-new-dtags  -L/system/lib "
+LIBS="  -lcrypto -lssl"
+LIBDIR="/system/lib64"
+INCLUDEDIR="${prefix}/include"
+LIBVERSION="2:0:0"
+
+for arg in $@
+do
+    if [ $arg = "--cflags" ]
+    then
+        echo "-I${INCLUDEDIR}"
+    fi
+    if [ $arg = "--libs" ]
+    then
+        echo "${LDFLAGS} -L${LIBDIR} ${LIBS} -lldns"
+    fi
+    if [ $arg = "-h" ] || [ $arg = "--help" ]
+    then
+        echo "Usage: $0 [--cflags] [--libs] [--version]"
+    fi
+    if [ $arg = "--version" ]
+    then
+        echo "${VERSION}"
+    fi
+    if [ $arg = "--libversion" ]
+    then
+        echo "${LIBVERSION}"
+    fi
+done

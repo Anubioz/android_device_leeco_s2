@@ -589,6 +589,7 @@
             <instance>default</instance>
         </interface>
 </hal>
+-->
 
     <hal format="hidl">
         <name>android.hardware.wifi.offload</name>
@@ -601,6 +602,7 @@
         </interface>
     </hal>
 
+<!--
     <hal format="hidl">
         <name>android.hardware.secure_element</name>
   <transport>hwbinder</transport>

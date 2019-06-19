@@ -1,0 +1,153 @@
+#!/data/data/com.termux/files/usr/bin/sh
+
+# Copyright (c) 2016, Cswl Coldwind <cswl1337@gmail.com
+# This software is licensed under the ISC Liscense.
+# https://github.com/cswl/tsu/blob/master/LICENSE.md
+
+show_usage() {
+  echo 'tsu - a wrapper for su for Termux'
+  echo
+  echo 'Usage: tsu [-a|-e|-p|-s <shell>]'
+  echo
+  echo '-s [</path/to/shell>]'
+  echo '    Use an alternate specified shell. `//usr` is expanded to $PREFIX.'
+  echo '-p'
+  echo '    Prepend /system/bin:/system/xbin to PATH and /system/lib{64} to LD_LIBRARY_PATH.'
+  echo '-a'
+  echo '    Append /system/bin:/system/xbin to PATH and /system/lib{64} to LD_LIBRARY_PATH.'
+  echo '-e'
+  echo '    Setup up some enviroment variables as when in Termux.'
+  echo
+  echo 'For details of the options see:'
+  echo 'https://github.com/cswl/tsu'
+}
+
+# parse the options
+# TODO: validate command line arguments
+while getopts ':aehps:c' opt; do
+  case $opt in
+    a)
+      shift $((OPTIND - 1))
+      APPEND_SYSTEM_PATH=1
+      ;;
+    e)
+      shift $((OPTIND - 1))
+      SETUP_ENV=1
+      ;;
+
+    s)
+      shift $((OPTIND - 1))
+      USER_SHELL="$OPTARG"
+      ;;
+    h)
+      show_usage
+      exit
+      ;;
+    p)
+      shift $((OPTIND - 1))
+      PREPEND_SYSTEM_PATH=1
+      ;;
+    c)
+      shift $((OPTIND - 1))
+      USER_COMMAND="$@"
+      ;;
+    *)
+      echo "Unknown option -$OPTARG" 2>&1
+      exit 1
+      ;;
+  esac
+done
+
+# prefix check
+test -z "$PREFIX" && PREFIX=/data/data/com.termux/files/usr
+
+# append path
+if test -n "$APPEND_SYSTEM_PATH"; then
+  PATH="$PATH:/system/bin:/system/xbin"
+  case "$(uname -m)" in
+    *64)
+      LD_LIBRARY_PATH="$PREFIX/lib:/system/lib64:/system/lib"
+      ;;
+    *)
+      LD_LIBRARY_PATH="$PREFIX/lib:/system/lib"
+      ;;
+  esac
+  # prepend path
+elif test -n "$PREPEND_SYSTEM_PATH"; then
+  PATH="/system/bin:/system/xbin:$PATH"
+  case "$(uname -m)" in
+    *64)
+      LD_LIBRARY_PATH="/system/lib64:/system/lib:$PREFIX/lib"
+      ;;
+    *)
+      LD_LIBRARY_PATH="/system/lib:$PREFIX/lib"
+      ;;
+  esac
+else
+  LD_LIBRARY_PATH="$PREFIX/lib"
+fi
+
+# export environment variables.
+if test -n "$SETUP_ENV"; then
+  export HOME=/data/data/com.termux/files/home
+  TERMUX_PATHS=/data/data/com.termux/files/usr/bin:/data/data/com.termux/files/usr/bin/applets
+  if test -n "$PREPEND_SYSTEM_PATH"; then
+    PATH="$PATH:$TERMUX_PATHS"
+  else
+    PATH="$TERMUX_PATHS:$PATH"
+  fi
+  export PATH
+fi
+
+# select shell
+if test -z "$USER_SHELL"; then
+  # check if user has set shell
+  if test -x "$HOME/.termux/shell"; then
+    ROOT_SHELL="$(readlink -f -- "$HOME/.termux/shell")"
+    # has installed bash?
+  elif test -x "$PREFIX/bin/bash"; then
+    ROOT_SHELL="$PREFIX/bin/bash"
+    # no..fallback to default ash
+  else
+    ROOT_SHELL="$PREFIX/bin/ash"
+  fi
+else
+  # expand //usr/ to /usr/
+  USER_SHELL_EXPANDED=$(echo "$USER_SHELL" | sed "s|^//usr/|$PREFIX/|")
+  ROOT_SHELL="$USER_SHELL_EXPANDED"
+fi
+
+# using the -c option of su allows to pass enviroment variables
+OLD_LIBRARY_PATH=$LD_LIBRARY_PATH
+if [ -e "/sbin/magisk" ]; then
+  # handle magisk
+  for s in '/magisk/.core/bin/su' '/sbin/su'; do
+    if [ -e "$s" ]; then
+      unset LD_LIBRARY_PATH
+      MAG32=$(command su -c "/sbin/magisk -V")
+      if [ "16400" -le "$MAG32" ]  && [ "$MAG32" -lt "18200" ]; then
+        # Magisk 16.4-18.2 removed 64 bit binaries which causes problems on some devices:
+        unset LD_PRELOAD
+      fi
+      SU_BINARY="$s"
+    fi
+  done
+else
+  for s in '/su/bin/su' '/sbin/su' '/system/xbin/su' '/system/bin/su'; do
+    if [ -e "$s" ]; then
+      SU_BINARY="$s"
+    fi
+  done
+fi
+
+if [ -z "$USER_COMMAND" ]; then
+  exec "$SU_BINARY" --preserve-environment -c "HISTFILE=$HOME/.$(basename $ROOT_SHELL)_history_root LD_LIBRARY_PATH=$OLD_LIBRARY_PATH PATH=$PATH $ROOT_SHELL"
+else
+  exec "$SU_BINARY" --preserve-environment -c "LD_LIBRARY_PATH=$OLD_LIBRARY_PATH PATH=$PATH $USER_COMMAND"
+
+fi
+
+# we didnt find su binary
+printf "No superuser binary detected. \\n"
+printf "Are you rooted? \\n"
+exit 1

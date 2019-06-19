@@ -1,0 +1,13 @@
+prefix=/system
+exec_prefix=${prefix}
+libdir=/system/lib64
+includedir=${prefix}/include
+
+Name: ldns
+Description: Library for DNS programming
+URL: http://www.nlnetlabs.nl/projects/ldns
+Version: 1.7.0
+Requires: 
+Libs: -L${libdir} -lldns
+Libs.private: -L/system/lib64 -Wl,-rpath=/system/lib64 -Wl,--enable-new-dtags
+Cflags: -I${includedir} 

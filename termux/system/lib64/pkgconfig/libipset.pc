@@ -1,0 +1,11 @@
+prefix=/system
+exec_prefix=${prefix}
+libdir=/system/lib64
+includedir=${prefix}/include
+
+Name: libipset
+Description: Userspace library for the ipset extensions and the kernel interface
+Version: 7.1
+Cflags: -I${includedir}
+Libs: -L${libdir} -lipset
+Requires.private: libmnl >= 1

@@ -1,0 +1,10 @@
+prefix=/system
+exec_prefix=/system
+libdir=/system/lib64
+includedir=/system/include
+
+Name: smartcols
+Description: table or tree library
+Version: 2.33.2
+Cflags: -I${includedir}/libsmartcols
+Libs: -L${libdir} -lsmartcols

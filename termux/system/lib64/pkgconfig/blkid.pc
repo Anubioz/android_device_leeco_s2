@@ -1,0 +1,11 @@
+prefix=/system
+exec_prefix=/system
+libdir=/system/lib64
+includedir=/system/include
+
+Name: blkid
+Description: Block device id library
+Version: 2.33.2
+Requires.private: uuid
+Cflags: -I${includedir}/blkid
+Libs: -L${libdir} -lblkid

@@ -1,0 +1,16 @@
+#libevent pkg-config source file
+
+prefix=/system
+exec_prefix=/system
+libdir=/system/lib64
+includedir=/system/include
+
+Name: libevent
+Description: libevent is an asynchronous notification event loop library
+Version: 2.1.10
+Requires:
+Conflicts:
+Libs: -L${libdir} -levent
+Libs.private: 
+Cflags: -I${includedir}
+

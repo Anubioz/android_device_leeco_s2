@@ -1,0 +1,128 @@
+#============= cnd ==============
+allow cnd wpa_data_file:dir { add_name write remove_name unlink };
+allow cnd wpa_data_file:sock_file { create setattr write unlink };
+
+#============= dpmd ==============
+allow dpmd netutils_wrapper_exec:file { execute execute_no_trans getattr open read };
+
+#============= fsck ==============
+allow fsck block_device:blk_file { ioctl open read write };
+
+#============= hal_audio_default ==============
+allow hal_audio_default audio_prop:property_service set;
+allow hal_audio_default init:unix_stream_socket connectto;
+allow hal_audio_default property_socket:sock_file write;
+allow hal_audio_default smartpa_device:chr_file { ioctl read write open };
+
+#============= init ==============
+allow init goodix:binder { transfer call};
+allow init self:capability2 block_suspend;
+allow init self:socket { create read write ioctl };
+allow init sysfs_wake_lock:file write;
+allow init system_server:binder call;
+allow init fingerprintd_data_file:file append;
+allow init hwservicemanager:binder { call transfer };
+allow init servicemanager:binder { call transfer };
+allow init kernel:security setcheckreqprot;
+allow init system_file:file execute_no_trans;
+allow init vendor_file:file execute_no_trans;
+
+#============= mm-qcamerad ==============
+allow mm-qcamerad vendor_camera_data_file:file { getattr open read write };
+
+#============= platform_app ==============
+allow platform_app proc_version:file { getattr open read };
+allow platform_app tmpfs:file { getattr open read };
+allow platform_app system_prop:property_service set;
+
+#============= priv_app ==============
+allow priv_app device:dir open;
+allow priv_app init:unix_stream_socket connectto;
+allow priv_app proc:file { getattr open };
+allow priv_app proc_interrupts:file open;
+allow priv_app proc_modules:file { open getattr };
+allow priv_app property_socket:sock_file write;
+allow priv_app sysfs:file { open read };
+allow priv_app sysfs_android_usb:file open;
+allow priv_app system_prop:property_service set;
+allow priv_app tmpfs:file { getattr open read };
+
+#============= shell ==============
+allow shell kernel:system syslog_read;
+allow shell pstorefs:dir { open read };
+allow shell clatd_exec:file getattr;
+allow shell fsck_exec:file getattr;
+allow shell netd_exec:file getattr;
+allow shell netutils_wrapper_exec:file getattr;
+allow shell sdcardd_exec:file getattr;
+
+#============= system_server ==============
+allow system_server init:binder { transfer call };
+allow system_server tmpfs:file { getattr open read };
+
+#============= webview_zygote ==============
+allow webview_zygote theme_data_file:dir search;
+allow webview_zygote zygote:unix_dgram_socket write;
+
+#============= vendor_init ==============
+allow vendor_init device:file write;
+allow vendor_init proc:file write;
+allow vendor_init proc_random:file write;
+
+#============= system_app ==============
+allow system_app default_prop:property_service set;
+allow system_app proc_pagetypeinfo:file { getattr open read };
+allow system_app sysfs_zram:dir search;
+allow system_app sysfs_zram:file { getattr open read };
+
+#============= qti_init_shell ==============
+allow qti_init_shell vendor_default_prop:property_service set;
+
+#============= hwservicemanager ==============
+allow hwservicemanager init:dir search;
+allow hwservicemanager init:file { open read };
+allow hwservicemanager init:process getattr;
+allow hwservicemanager init:binder call;
+
+
+#============= ims ==============
+allow ims hal_rcsservice_exec:file entrypoint;
+allow ims self:capability2 wake_alarm;
+
+#============= goodix ==============
+allow goodix init:binder transfer;
+
+#============= recovery ==============
+allow recovery device:dir { add_name create remove_name rmdir write };
+allow recovery device:file { create getattr open setattr write execute execute_no_trans };
+allow recovery device:lnk_file { create unlink };
+allow recovery dhcp_data_file:dir { getattr open read };
+allow recovery dhcp_data_file:file getattr;
+allow recovery media_rw_data_file:dir getattr;
+allow recovery media_rw_data_file:file { getattr ioctl unlink };
+allow recovery mtp_device:chr_file ioctl;
+allow recovery perfprofd_data_file:dir getattr;
+allow recovery shell_data_file:dir { getattr open read };
+allow recovery sysfs_zram:dir search;
+allow recovery sysfs_zram_uevent:file { getattr open read };
+allow recovery system_data_file:file setattr;
+allow recovery tmpfs:fifo_file { getattr unlink };
+allow recovery app_data_file:dir { getattr open read };
+allow recovery app_data_file:file getattr;
+allow recovery bootchart_data_file:dir { getattr open read };
+allow recovery default_prop:property_service set;
+allow recovery logpersistd_logging_prop:file { getattr open };
+allow recovery mmc_prop:file { getattr open };
+allow recovery rootfs:dir { add_name remove_name write };
+allow recovery rootfs:file rename;
+allow recovery rootfs:lnk_file create;
+allow recovery safemode_prop:file { getattr open };
+allow recovery self:capability sys_time;
+allow recovery selinuxfs:file write;
+allow recovery system_radio_prop:property_service set;
+
+#============= servicemanager ==============
+allow servicemanager init:binder transfer;
+
+#============= thermal-engine ==============
+allow thermal-engine sysfs_batteryinfo:dir search;

@@ -1,0 +1,4 @@
+PrintMotd no
+PasswordAuthentication yes
+PubkeyAcceptedKeyTypes +ssh-dss
+Subsystem sftp /system/libexec/sftp-server

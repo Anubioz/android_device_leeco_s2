@@ -1,0 +1,70 @@
+Это файл …/info/dir, содержащий корневую ноду иерархии Info,
+называется (dir)Top. При вызове Info вы видите эту ноду.
+
+File: dir,	Node: Top	Это корневая нода иерархии INFO
+
+  Здесь (в ноде Directory) представлено меню по основным темам.
+  Нажмите «q», чтобы выйти; «H», чтобы посмотреть все команды Info;
+  «d», чтобы вернуться сюда; «h», чтобы прочитать руководство для новичков;
+  «mEmacs<Return>», чтобы прочитать руководство по Emacs.
+
+  В Emacs вы можете нажать вторую кнопку мыши на пункте меню или перекрёстной
+  ссылке, чтобы перейти к нему.
+
+* Menu:
+
+Archiving
+* Cpio: (cpio).                 Copy-in-copy-out archiver to tape or disk.
+* Tar: (tar).                   Making tape (or disk) archives.
+
+Basics
+* Bash: (bash).                 The GNU Bourne-Again SHell.
+
+Development
+* libffi: (libffi).             Portable foreign-function interface library.
+
+Encryption
+* Nettle: (nettle).             A low-level cryptographic library.
+
+GNU Libraries
+* Assuan: (assuan).             An IPC library for non-persistent servers.
+* libgcrypt: (gcrypt).          Cryptographic function library.
+
+GNU libraries
+* gmp: (gmp).                   GNU Multiple Precision Arithmetic Library.
+
+GNU Packages
+* Ddrescue: (ddrescue).         Data recovery tool
+
+Individual utilities
+* direvent: (direvent).                         Monitor changes in directories.
+* libtool-invocation: (libtool)Invoking libtool.
+                                                Running the 'libtool' script.
+* libtoolize: (libtool)Invoking libtoolize.     Adding libtool support.
+* tar: (tar)tar invocation.                     Invoking GNU 'tar'.
+
+Libraries
+* History: (history).           The GNU history library API.
+* RLuserman: (rluserman).       The GNU readline library User's Manual.
+* Readline: (readline).         The GNU readline library API.
+* libgpg-error: (gnupg).        Error codes and common code for GnuPG.
+
+Localization
+* idn2: (libidn2)Invoking idn2. Internationalized Domain Name (IDNA2008/TR46) 
+                                  conversion.
+
+Software development
+* GNU libunistring: (libunistring).
+                                Unicode string library.
+* Libtool: (libtool).           Generic shared library support script.
+
+Software libraries
+* libidn2: (libidn2).           Internationalized domain names (IDNA2008/TR46) 
+                                  processing.
+
+System administration
+* parted: (parted).             GNU partitioning software
+
+Text creation and manipulation
+* grep: (grep).                 Print lines that match patterns.
+* sed: (sed).                   Stream EDitor.  

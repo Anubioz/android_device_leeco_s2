@@ -1,0 +1,11 @@
+prefix=/system
+exec_prefix=${prefix}
+libdir=/system/lib64
+includedir=${prefix}/include
+
+Name: uuid
+Description: Universally unique id library
+Version: 1.0.3
+Requires:
+Cflags: -I${includedir}/uuid
+Libs: -L${libdir} -luuid

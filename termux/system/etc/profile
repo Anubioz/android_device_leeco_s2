@@ -1,0 +1,18 @@
+for i in /system/etc/profile.d/*.sh; do
+	if [ -r $i ]; then
+		. $i
+	fi
+done
+unset i
+
+# Source etc/bash.bashrc and ~/.bashrc also for interactive bash login shells:
+if [ "$BASH" ]; then
+        if [[ "$-" == *"i"* ]]; then
+                if [ -r /system/etc/bash.bashrc ]; then
+                        . /system/usr/etc/bash.bashrc
+                fi
+                if [ -r /sdcard/.bashrc ]; then
+                        . /sdcard/.bashrc
+                fi
+        fi
+fi

@@ -149,7 +149,6 @@
             <instance>default</instance>
         </interface>
     </hal>
-<!--
     <hal format="hidl" optional="true">
         <name>android.hardware.wifi.offload</name>
         <version>1.0</version>
@@ -158,7 +157,6 @@
             <instance>default</instance>
         </interface>
     </hal>
--->
     <hal format="hidl" optional="false">
         <name>android.system.wifi.keystore</name>
         <version>1.0</version>

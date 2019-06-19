@@ -1,0 +1,2 @@
+#!/bin/sh
+dalvikvm -cp /system/share/dex/apksigner.jar net.fornwall.apksigner.Main $@
