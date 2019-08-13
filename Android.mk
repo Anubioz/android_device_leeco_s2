@@ -17,8 +17,8 @@
 LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
-LOCAL_MODULE := rr.leeco.gcam
-LOCAL_SRC_FILES := Prebuilts/rr.leeco.gcam.apk
+LOCAL_MODULE := rr.leeco.camera
+LOCAL_SRC_FILES := Prebuilts/rr.leeco.camera.apk
 LOCAL_MODULE_TAGS := optional
 LOCAL_CERTIFICATE := platform
 LOCAL_OVERRIDES_PACKAGES := Camera2
@@ -33,7 +33,6 @@ include $(CLEAR_VARS)
 LOCAL_MODULE := LeRemote
 LOCAL_MODULE_TAGS := optional
 LOCAL_SRC_FILES := Prebuilts/LetvRemoteControl_preinstall.apk
-LOCAL_MODULE_TAGS := optional
 LOCAL_CERTIFICATE := platform
 LOCAL_MODULE_CLASS := APPS
 LOCAL_PRIVILEGED_MODULE := true

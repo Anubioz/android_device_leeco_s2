@@ -483,13 +483,12 @@ PRODUCT_PACKAGES += \
     parted \
     OmniSwitch \
     AdAway \
-    rr.leeco.gcam \
     TitaniumBackup \
     rr.leeco.exkernel \
     FiLMiCPro \
     FDroid \
-    RRLeecoPerf
-
+    RRLeecoPerf \
+    SnapdragonCamera2
 
 PRODUCT_PACKAGES += \
     tinyplay \
