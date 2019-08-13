@@ -15,3 +15,19 @@ binder_call(goodix, servicemanager);
 binder_call(goodix, hal_fingerprint_default);
 
 add_service(goodix, goodix_service);
+
+
+allow goodix fingerprintd_data_file:file { { create rename setattr unlink { { getattr open read ioctl lock map } { open append write lock map } } } };
+allow goodix fingerprintd_data_file:dir { { open getattr read search ioctl lock } { open search write add_name remove_name lock } };
+allow keystore goodix:dir search;
+allow keystore goodix:file { read open };
+allow keystore goodix:process getattr;
+allow goodix keystore_service:service_manager find;
+allow goodix keystore:binder { call transfer };
+allow keystore goodix:binder transfer;
+allow goodix keystore:fd use;
+allow keystore goodix:binder { call transfer };
+allow goodix keystore:binder transfer;
+allow keystore goodix:fd use;
+allow goodix keystore:keystore_key { add_auth };
+

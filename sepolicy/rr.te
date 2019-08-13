@@ -84,13 +84,9 @@ allow hwservicemanager init:file { open read };
 allow hwservicemanager init:process getattr;
 allow hwservicemanager init:binder call;
 
-
 #============= ims ==============
 allow ims hal_rcsservice_exec:file entrypoint;
 allow ims self:capability2 wake_alarm;
-
-#============= goodix ==============
-allow goodix init:binder transfer;
 
 #============= recovery ==============
 allow recovery device:dir { add_name create remove_name rmdir write };
@@ -98,8 +94,8 @@ allow recovery device:file { create getattr open setattr write execute execute_n
 allow recovery device:lnk_file { create unlink };
 allow recovery dhcp_data_file:dir { getattr open read };
 allow recovery dhcp_data_file:file getattr;
-allow recovery media_rw_data_file:dir getattr;
-allow recovery media_rw_data_file:file { getattr ioctl unlink };
+allow recovery media_rw_data_file:dir { getattr add_name remove_name write };
+allow recovery media_rw_data_file:file { getattr ioctl read relabelto unlink };
 allow recovery mtp_device:chr_file ioctl;
 allow recovery perfprofd_data_file:dir getattr;
 allow recovery shell_data_file:dir { getattr open read };
@@ -126,3 +122,63 @@ allow servicemanager init:binder transfer;
 
 #============= thermal-engine ==============
 allow thermal-engine sysfs_batteryinfo:dir search;
+
+allow adbd self:socket create;
+
+#============= platform_app ==============
+allow platform_app app_data_file:file execute;
+
+#============= recovery ==============
+allow recovery media_rw_data_file:dir { add_name remove_name write };
+allow recovery media_rw_data_file:file { ioctl read relabelto unlink };
+allow recovery system_data_file:file setattr;
+allow recovery tmpfs:fifo_file { getattr unlink };
+allow recovery tmpfs:lnk_file unlink;
+
+#============= sysinit ==============
+allow init adbd:dir search;
+allow init adbd:file { getattr open };
+allow init cnd:binder call;
+allow init dataservice_app:file read;
+allow init devpts:chr_file { ioctl open setattr write };
+allow init hal_alarm_qti_default:binder call;
+allow init hal_cas_default:binder call;
+allow init hal_configstore_default:binder call;
+allow init hal_imsrtp:dir search;
+allow init hal_imsrtp:file { getattr open };
+allow init hal_iop_default:binder call;
+allow init healthd:dir search;
+allow init healthd:file open;
+allow init keystore:binder call;
+allow init location:dir search;
+allow init location:file { getattr open };
+allow init mediaprovider:dir search;
+allow init mediaprovider:file { getattr open };
+allow init netd:binder call;
+allow init platform_app:dir search;
+allow init platform_app:file { getattr open read };
+allow init quicksetsdk_app:dir search;
+allow init quicksetsdk_app:file open;
+allow init secure_element:file read;
+allow init self:tcp_socket { read write };
+allow init sysfs:dir { open read };
+allow init sysfs:file getattr;
+allow init system_data_file:file { append getattr open read };
+allow init vendor_toolbox_exec:file execute_no_trans;
+allow init wcnss_service:dir search;
+allow init wcnss_service:file open;
+
+
+#============= adbd ==============
+allow adbd ctl_start_prop:property_service set;
+
+#============= goodix ==============
+allow goodix init:binder { call transfer };
+
+#============= keystore ==============
+allow keystore init:dir search;
+allow keystore init:file { open read };
+allow keystore init:process getattr;
+
+allow init keystore:keystore_key add_auth;
+allow init keystore_service:service_manager find;
